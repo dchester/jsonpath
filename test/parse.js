@@ -1,12 +1,7 @@
 var assert = require('assert');
-var JSONPath = require('../');
-var jp;
+var jp = require('../');
 
 suite('json-path-parse', function() {
-
-  setup(function() {
-    jp = new JSONPath;
-  });
 
   test('should parse root-only', function() {
     var tree = jp.parse('$');

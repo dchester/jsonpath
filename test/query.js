@@ -1,14 +1,9 @@
 var assert = require('assert');
-var JSONPath = require('../');
-var jp;
+var jp = require('../');
 
 var data = require('./data/store.json');
 
 suite('json-path-query', function() {
-
-  setup(function() {
-    jp = new JSONPath;
-  });
 
   test('first-level member', function() {
     var results = jp.nodes(data, '$.store');
