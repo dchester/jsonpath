@@ -4,19 +4,19 @@ var jp;
 
 var data = require('./data/store.json');
 
-suite('json-path-eval', function() {
+suite('json-path-query', function() {
 
   setup(function() {
     jp = new JSONPath;
   });
 
   test('first-level member', function() {
-    var results = jp.evaluate(data, '$.store');
+    var results = jp.nodes(data, '$.store');
     assert.deepEqual(results, [ { path: ['$', 'store'], value: data.store } ]);
   });
 
   test('authors of all books in the store', function() {
-    var results = jp.evaluate(data, '$.store.book[*].author');
+    var results = jp.nodes(data, '$.store.book[*].author');
     assert.deepEqual(results, [
       { path: ['$', 'store', 'book', 0, 'author'], value: 'Nigel Rees' },
       { path: ['$', 'store', 'book', 1, 'author'], value: 'Evelyn Waugh' },
@@ -26,7 +26,7 @@ suite('json-path-eval', function() {
   });
 
   test('all authors', function() {
-    var results = jp.evaluate(data, '$..author');
+    var results = jp.nodes(data, '$..author');
     assert.deepEqual(results, [
       { path: ['$', 'store', 'book', 0, 'author'], value: 'Nigel Rees' },
       { path: ['$', 'store', 'book', 1, 'author'], value: 'Evelyn Waugh' },
@@ -36,7 +36,7 @@ suite('json-path-eval', function() {
   });
 
   test('all things in store', function() {
-    var results = jp.evaluate(data, '$.store.*');
+    var results = jp.nodes(data, '$.store.*');
     assert.deepEqual(results, [
       { path: ['$', 'store', 'book'], value: data.store.book },
       { path: ['$', 'store', 'bicycle'], value: data.store.bicycle }
@@ -44,7 +44,7 @@ suite('json-path-eval', function() {
   });
 
   test('price of everything in the store', function() {
-    var results = jp.evaluate(data, '$.store..price');
+    var results = jp.nodes(data, '$.store..price');
     assert.deepEqual(results, [
       { path: ['$', 'store', 'book', 0, 'price'], value: 8.95 },
       { path: ['$', 'store', 'book', 1, 'price'], value: 12.99 },
@@ -55,12 +55,12 @@ suite('json-path-eval', function() {
   });
 
   test('last book in order via expression', function() {
-    var results = jp.evaluate(data, '$..book[(@.length-1)]');
+    var results = jp.nodes(data, '$..book[(@.length-1)]');
     assert.deepEqual(results, [ { path: ['$', 'store', 'book', 3], value: data.store.book[3] }]);
   });
 
   test('first two books via union', function() {
-    var results = jp.evaluate(data, '$..book[0,1]');
+    var results = jp.nodes(data, '$..book[0,1]');
     assert.deepEqual(results, [
       { path: ['$', 'store', 'book', 0], value: data.store.book[0] },
       { path: ['$', 'store', 'book', 1], value: data.store.book[1] }
@@ -68,7 +68,7 @@ suite('json-path-eval', function() {
   });
 
   test('first two books via slice', function() {
-    var results = jp.evaluate(data, '$..book[0:2]');
+    var results = jp.nodes(data, '$..book[0:2]');
     assert.deepEqual(results, [
       { path: ['$', 'store', 'book', 0], value: data.store.book[0] },
       { path: ['$', 'store', 'book', 1], value: data.store.book[1] }
@@ -76,7 +76,7 @@ suite('json-path-eval', function() {
   });
 
   test('filter all books with isbn number', function() {
-    var results = jp.evaluate(data, '$..book[?(@.isbn)]');
+    var results = jp.nodes(data, '$..book[?(@.isbn)]');
     assert.deepEqual(results, [
       { path: ['$', 'store', 'book', 2], value: data.store.book[2] },
       { path: ['$', 'store', 'book', 3], value: data.store.book[3] }
@@ -84,7 +84,7 @@ suite('json-path-eval', function() {
   });
 
   test('filter all books with a price less than 10', function() {
-    var results = jp.evaluate(data, '$..book[?(@.price<10)]');
+    var results = jp.nodes(data, '$..book[?(@.price<10)]');
     var books = data.store.book;
     assert.deepEqual(results, [
       { path: ['$', 'store', 'book', 0], value: data.store.book[0] },
@@ -93,7 +93,7 @@ suite('json-path-eval', function() {
   });
 
   test('path to match all elements', function() {
-    var results = jp.evaluate(data, '$..*');
+    var results = jp.nodes(data, '$..*');
     assert.deepEqual(results, [
       { path: [ '$', 'store' ], value: data.store },
       { path: [ '$', 'store', 'book' ], value: data.store.book },
