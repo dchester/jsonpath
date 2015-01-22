@@ -27,17 +27,33 @@ Here are syntax and examples adapted from [Stefan Goessner's original post](http
 
 JSONPath         | Description
 -----------------|------------
-$                | the root object/element
-@                | the current object/element
-.                | child member operator
-..	         | recursive descendant operator; JSONPath borrows this syntax from E4X
-*	         | wildcard matching all objects/elements regardless their names
-[]	         | subscript operator
-[,]	         | union operator for alternate names or array indices as a set
-[start:end:step] | array slice operator borrowed from ES4 / python
-?()              | applies a filter (script) expression via static evaluation
-()	         | script expression via static evaluation 
+$                | The root object/element
+@                | The current object/element
+.                | Child member operator
+..	         | Recursive descendant operator; JSONPath borrows this syntax from E4X
+\*	         | Wildcard matching all objects/elements regardless their names
+[]	         | Subscript operator
+[,]	         | Union operator for alternate names or array indices as a set
+[start:end:step] | Array slice operator borrowed from ES4 / Python
+?()              | Applies a filter (script) expression via static evaluation
+()	         | Script expression via static evaluation 
 
+Example JSONPath expressions:
+
+JSONPath                      | Description
+------------------------------|------------
+$.store.book[\*].author       | The authors of all books in the store
+$..author                     | All authors
+$.store.\*                    | All things in store, which are some books and a red bicycle
+$.store..price                | The price of everything in the store
+$..book[2]                    | The third book via array subscript
+$..book[(@.length-1)]         | The third book via script subscript
+$..book[-1:]                  | The last book in order
+$..book[0,1]                  | The first two books via subscript union
+$..book[:2]                   | The first two books via subscript array slice
+$..book[?(@.isbn)]            | Filter all books with isbn number
+$..book[?(@.price<10)]        | Filter all books cheapier than 10
+$..\*                         | All members of JSON structure
 
 ## Methods
 
@@ -66,9 +82,9 @@ This implementation aims to be equivalent with Stefan Goessner's original implem
 
 While this implementation aims to be mostly equivalent to Stefan Goessner's original implementation, in addition to the difference in script evaluation mentioned above, there are also some arguable bugs in the original library that have not been carried through here:
 
-- final `step` arguments in slice operators may be negative
-- script expressions may contain `@` characters not referring to instance variables
-- subscript operators may be single-quoted
+- final `step` arguments in slice operators may now be negative
+- script expressions may now contain `@` characters not referring to instance variables
+- subscript operators may now be double-quoted
 
 
 ## License
