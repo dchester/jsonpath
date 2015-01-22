@@ -1,0 +1,11 @@
+{
+  "name": "json-path",
+  "dependencies": {
+    "esprima": "1.2.2",
+    "jison": "0.3.10",
+    "static-eval": "^0.2.3"
+  },
+  "devDependencies": {
+    "mocha": "2.1.0"
+  }
+}
