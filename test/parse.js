@@ -1,41 +1,54 @@
 var assert = require('assert');
 var jp = require('../');
+var util = require('util');
 
-suite('json-path-parse', function() {
+suite('parse', function() {
 
   test('should parse root-only', function() {
-    var tree = jp.parse('$');
-    assert.deepEqual(tree.root_element, "$");
+    var path = jp.parse('$');
+    assert.deepEqual(path, [ { expression: { type: 'root', value: '$' } } ]);
+  });
+
+  test('parse path for store', function() {
+    var path = jp.parse('$.store');
+    assert.deepEqual(path, [
+      { expression: { type: 'root', value: '$' } },
+      { operation: 'member', scope: 'child', expression: { type: 'identifier', value: 'store' } }
+    ])
   });
 
   test('parse path for the authors of all books in the store', function() {
     var path = jp.parse('$.store.book[*].author');
-    assert.deepEqual(path.components, [
+    assert.deepEqual(path, [
+      { expression: { type: 'root', value: '$' } },
       { operation: 'member', scope: 'child', expression: { type: 'identifier', value: 'store' } },
       { operation: 'member', scope: 'child', expression: { type: 'identifier', value: 'book' } },
-      { operation: 'subscript', scope: 'child', expression: { type: 'wildcard' } },
+      { operation: 'subscript', scope: 'child', expression: { type: 'wildcard', value: '*' } },
       { operation: 'member', scope: 'child', expression: { type: 'identifier', value: 'author' } }
     ])
   });
 
   test('parse path for all authors', function() {
     var path = jp.parse('$..author');
-    assert.deepEqual(path.components, [
+    assert.deepEqual(path, [
+      { expression: { type: 'root', value: '$' } },
       { operation: 'member', scope: 'descendant', expression: { type: 'identifier', value: 'author' } }
     ])
   });
 
   test('parse path for all things in store', function() {
     var path = jp.parse('$.store.*');
-    assert.deepEqual(path.components, [
+    assert.deepEqual(path, [
+      { expression: { type: 'root', value: '$' } },
       { operation: 'member', scope: 'child', expression: { type: 'identifier', value: 'store' } },
-      { operation: 'member', scope: 'child', expression: { type: 'wildcard' } }
+      { operation: 'member', scope: 'child', expression: { type: 'wildcard', value: '*' } }
     ])
   });
 
   test('parse path for price of everything in the store', function() {
     var path = jp.parse('$.store..price');
-    assert.deepEqual(path.components, [
+    assert.deepEqual(path, [
+      { expression: { type: 'root', value: '$' } },
       { operation: 'member', scope: 'child', expression: { type: 'identifier', value: 'store' } },
       { operation: 'member', scope: 'descendant', expression: { type: 'identifier', value: 'price' } }
     ])
@@ -43,7 +56,8 @@ suite('json-path-parse', function() {
 
   test('parse path for the last book in order via expression', function() {
     var path = jp.parse('$..book[(@.length-1)]');
-    assert.deepEqual(path.components, [
+    assert.deepEqual(path, [
+      { expression: { type: 'root', value: '$' } },
       { operation: 'member', scope: 'descendant', expression: { type: 'identifier', value: 'book' } },
       { operation: 'subscript', scope: 'child', expression: { type: 'script_expression', value: '(@.length-1)' } }
     ])
@@ -51,15 +65,18 @@ suite('json-path-parse', function() {
 
   test('parse path for the first two books via union', function() {
     var path = jp.parse('$..book[0,1]');
-    assert.deepEqual(path.components, [
+
+    assert.deepEqual(path, [
+      { expression: { type: 'root', value: '$' } },
       { operation: 'member', scope: 'descendant', expression: { type: 'identifier', value: 'book' } },
-      { operation: 'subscript', scope: 'child', expression: { type: 'union', value: [ { type: 'numeric_literal', value: '0' }, { type: 'numeric_literal', value: '1' } ] } }
+      { operation: 'subscript', scope: 'child', expression: { type: 'union', value: [ { expression: { type: 'numeric_literal', value: '0' } }, { expression: { type: 'numeric_literal', value: '1' } } ] } }
     ])
   });
 
   test('parse path for the first two books via slice', function() {
     var path = jp.parse('$..book[0:2]');
-    assert.deepEqual(path.components, [
+    assert.deepEqual(path, [
+      { expression: { type: 'root', value: '$' } },
       { operation: 'member', scope: 'descendant', expression: { type: 'identifier', value: 'book' } },
       { operation: 'subscript', scope: 'child', expression: { type: 'slice', value: '0:2' } }
     ])
@@ -67,7 +84,8 @@ suite('json-path-parse', function() {
 
   test('parse path to filter all books with isbn number', function() {
     var path = jp.parse('$..book[?(@.isbn)]');
-    assert.deepEqual(path.components, [
+    assert.deepEqual(path, [
+      { expression: { type: 'root', value: '$' } },
       { operation: 'member', scope: 'descendant', expression: { type: 'identifier', value: 'book' } },
       { operation: 'subscript', scope: 'child', expression: { type: 'filter_expression', value: '?(@.isbn)' } }
     ])
@@ -75,7 +93,8 @@ suite('json-path-parse', function() {
 
   test('parse path to filter all books with a price less than 10', function() {
     var path = jp.parse('$..book[?(@.price<10)]');
-    assert.deepEqual(path.components, [
+    assert.deepEqual(path, [
+      { expression: { type: 'root', value: '$' } },
       { operation: 'member', scope: 'descendant', expression: { type: 'identifier', value: 'book' } },
       { operation: 'subscript', scope: 'child', expression: { type: 'filter_expression', value: '?(@.price<10)' } }
     ])
@@ -83,9 +102,33 @@ suite('json-path-parse', function() {
 
   test('parse path to match all elements', function() {
     var path = jp.parse('$..*');
-    assert.deepEqual(path.components, [
-      { operation: 'member', scope: 'descendant', expression: { type: 'wildcard' } }
+    assert.deepEqual(path, [
+      { expression: { type: 'root', value: '$' } },
+      { operation: 'member', scope: 'descendant', expression: { type: 'wildcard', value: '*' } }
     ])
+  });
+
+  test('parse path with leading member', function() {
+    var path = jp.parse('store');
+    assert.deepEqual(path, [
+      { operation: 'member', scope: 'child', expression: { type: 'identifier', value: 'store' } }
+    ])
+  });
+
+});
+
+suite('parse-negative', function() {
+
+  test('parse path with leading member component throws', function() {
+    assert.throws(function() { var path = jp.parse('.store') })
+  });
+
+  test('parse path with leading descendant member throws', function() {
+    assert.throws(function() { var path = jp.parse('..store') })
+  });
+
+  test('leading script throws', function() {
+    assert.throws(function() { var path = jp.parse('()') })
   });
 
 });

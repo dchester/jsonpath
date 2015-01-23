@@ -80,7 +80,6 @@ suite('json-path-query', function() {
 
   test('filter all books with a price less than 10', function() {
     var results = jp.nodes(data, '$..book[?(@.price<10)]');
-    var books = data.store.book;
     assert.deepEqual(results, [
       { path: ['$', 'store', 'book', 0], value: data.store.book[0] },
       { path: ['$', 'store', 'book', 2], value: data.store.book[2] }
@@ -119,5 +118,49 @@ suite('json-path-query', function() {
       { path: [ '$', 'store', 'bicycle', 'price' ], value: 19.95 }
     ]);
   });
+
+  test('no match returns empty array', function() {
+    var results = jp.nodes(data, '$..bookz');
+    assert.deepEqual(results, []);
+  });
+
+  test('member numeric literal gets first element', function() {
+    var results = jp.nodes(data, '$.store.book.0');
+    assert.deepEqual(results, [ { path: [ '$', 'store', 'book', 0 ], value: data.store.book[0] } ]);
+  });
+
+  test('descendant numeric literal gets first element', function() {
+    var results = jp.nodes(data, '$.store.book..0');
+    assert.deepEqual(results, [ { path: [ '$', 'store', 'book', 0 ], value: data.store.book[0] } ]);
+  });
+
+  test('root element gets us original obj', function() {
+    var results = jp.nodes(data, '$');
+    assert.deepEqual(results, [ { path: ['$'], value: data } ]);
+  });
+
+  test('subscript double-quoted string', function() {
+    var results = jp.nodes(data, '$["store"]');
+    assert.deepEqual(results, [ { path: ['$', 'store'], value: data.store} ]);
+  });
+
+  test('subscript single-quoted string', function() {
+    var results = jp.nodes(data, "$['store']");
+    assert.deepEqual(results, [ { path: ['$', 'store'], value: data.store} ]);
+  });
+
+  test('leading member component', function() {
+    var results = jp.nodes(data, "store");
+    assert.deepEqual(results, [ { path: ['$', 'store'], value: data.store} ]);
+  });
+
+  test('union of subscript string literal keys', function() {
+    var results = jp.nodes(data, "$.store['book','bicycle']");
+    assert.deepEqual(results, [
+      { path: ['$', 'store', 'book'], value: data.store.book },
+      { path: ['$', 'store', 'bicycle'], value: data.store.bicycle },
+    ]);
+  });
+
 });
 
