@@ -6,19 +6,17 @@ Query JavaScript objects with JSONPath expressions.  Robust / safe JSONPath engi
 ## Query Example
 
 ```javascript
-var store = {
-  books: [
-    { "author": "Nigel Rees",       "title": "Sayings of the Century" },
-    { "author": "Evelyn Waugh",     "title": "Sword of Honour" },
-    { "author": "Herman Melville",  "title": "Moby Dick" },
-    { "author": "J. R. R. Tolkien", "title": "The Lord of the Rings" }
-  ]
-};
+var cities = [
+  { name: "London", "population": 8615246 },
+  { name: "Berlin", "population": 3517424 },
+  { name: "Madrid", "population": 3165235 },
+  { name: "Rome",   "population": 2870528 }
+];
 
 var jp = require('json-path');
-var authors = jp.query(books, '$..author');
+var names = jp.query(cities, '$..name');
 
-// [ 'Nigel Rees', 'Evelyn Waugh', 'Herman Melville', 'J. R. R. Tolkien' ]
+// [ "London", "Berlin", "Madrid", "Rome" ]
 ```
 
 ## JSONPath Syntax
@@ -38,6 +36,44 @@ $                | The root object/element
 ?()              | Applies a filter (script) expression via static evaluation
 ()	         | Script expression via static evaluation 
 
+Given this sample data set, see example expressions below:
+
+```
+{
+  "store": {
+    "book": [ 
+      {
+        "category": "reference",
+        "author": "Nigel Rees",
+        "title": "Sayings of the Century",
+        "price": 8.95
+      }, {
+        "category": "fiction",
+        "author": "Evelyn Waugh",
+        "title": "Sword of Honour",
+        "price": 12.99
+      }, {
+        "category": "fiction",
+        "author": "Herman Melville",
+        "title": "Moby Dick",
+        "isbn": "0-553-21311-3",
+        "price": 8.99
+      }, {
+         "category": "fiction",
+        "author": "J. R. R. Tolkien",
+        "title": "The Lord of the Rings",
+        "isbn": "0-395-19395-8",
+        "price": 22.99
+      }
+    ],
+    "bicycle": {
+      "color": "red",
+      "price": 19.95
+    }
+  }
+}
+```
+
 Example JSONPath expressions:
 
 JSONPath                      | Description
@@ -55,37 +91,81 @@ $..book[?(@.isbn)]            | Filter all books with isbn number
 $..book[?(@.price<10)]        | Filter all books cheapier than 10
 $..\*                         | All members of JSON structure
 
+
 ## Methods
 
 #### jp.query(obj, pathExpression)
 
 Find elements in `obj` matching `pathExpression`.  Returns an array of elements that satisfy the provided JSONPath expression, or an empty array if none were matched.
 
+```javascript
+var authors = jp.query(data, '$..author');
+// [ 'Nigel Rees', 'Evelyn Waugh', 'Herman Melville', 'J. R. R. Tolkien' ]
+```
+
 #### jp.paths(obj, pathExpression)
 
 Find elements in `obj` matching `pathExpression`.  Returns an array of element paths that satisfy the provided JSONPath expression. Each path is itself an array of keys representing the location within `obj` of the matching element.
+
+```javascript
+var paths = jp.paths(data, '$..author');
+// [
+//   ['$', 'store', 'book', 0, 'author'] },
+//   ['$', 'store', 'book', 1, 'author'] },
+//   ['$', 'store', 'book', 2, 'author'] },
+//   ['$', 'store', 'book', 3, 'author'] }
+// ]
+```
 
 #### jp.nodes(obj, pathExpression)
 
 Find elements and their corresponding paths in `obj` matching `pathExpression`.  Returns an array of node objects where each node has a `path` containing an array of keys representing the location within `obj`, and a `value` pointing to the matched element.
 
+```javascript
+var nodes = jp.nodes(data, '$..author');
+// [
+//   { path: ['$', 'store', 'book', 0, 'author'], value: 'Nigel Rees' },
+//   { path: ['$', 'store', 'book', 1, 'author'], value: 'Evelyn Waugh' },
+//   { path: ['$', 'store', 'book', 2, 'author'], value: 'Herman Melville' },
+//   { path: ['$', 'store', 'book', 3, 'author'], value: 'J. R. R. Tolkien' }
+// ]
+```
+
 #### jp.parse(pathExpression)
 
 Parse the provided JSONPath expression into path components and their associated operations.
 
-## Evaluating Script Expressions
+```javascript
+var path = jp.parse('$..author');
+// [
+//   { expression: { type: 'root', value: '$' } },
+//   { expression: { type: 'identifier', value: 'author' }, operation: 'member', scope: 'descendant' }
+// ]
+```
 
-This implementation aims to be equivalent with Stefan Goessner's original implementation with the notable exception that script expressions are statically evaluated rather than using the underlying (Node.js) script engine directly.  That means both that the scope is limited to the instance variable, and only a subset of operations are available.  See more at `static-eval`.
 
- 
 ## Differences from Original Implementation
 
-While this implementation aims to be mostly equivalent to Stefan Goessner's original implementation, in addition to the difference in script evaluation mentioned above, there are also some arguable bugs in the original library that have not been carried through here:
+This implementation aims to be compatible with Stefan Goessner's original implementation with a few notable exceptions described below.
 
+### Evaluating Script Expressions
+
+Script expressions (i.e, `(...)` and `?(...)`) are statically evaluated via [static-eval](https://github.com/substack/static-eval) rather than using the underlying script engine directly.  That means both that the scope is limited to the instance variable (`@`), and only simple expressions (with no side effects) will be valid.  So for example, `?(@.length>10)` will be just fine to match arrays with more than ten elements, but `?(process.exit())` will not get evaluated since `process` would yield a `ReferenceError`.  This method is even safer than `vm.runInNewContext`, since the script engine itself is more limited and entirely distinct from the one running the application ocde.  See more details in the [implementation](https://github.com/substack/static-eval/blob/master/index.js) of the evaluator.
+
+### Grammar
+
+This project uses a formal BNF grammar to parse JSONPath expressions, an attempt at reverse-engineering the intent of the original implementation, which parses via a series of creative regular expressions.  The regex approach can sometimes be forgiving for better or for worse (e.g., `$['store]` => `$['store']`), and in other cases, can be just plain wrong (e.g. `[` => `$`). 
+
+### Other Minor Differences
+
+As a result of using a real parser and static evaluation, there are some arguable bugs in the original library that have not been carried through here:
+
+- strings in subscripts may now be double-quoted
 - final `step` arguments in slice operators may now be negative
-- script expressions may now contain `@` characters not referring to instance variables
-- subscript operators may now be double-quoted
-
+- script expressions may now contain `.` and `@` characters not referring to instance variables
+- subscripts no longer act as character slices on string elements
+- non-asci non-word characters are no-longer valid in member identifier names; use quoted subscript strings instead (e.g., `$['$']` instead of `$.$`)
+- unions now yield real unions with no duplicates rather than concatenated results
 
 ## License
 
