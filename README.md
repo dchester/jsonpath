@@ -150,7 +150,7 @@ This implementation aims to be compatible with Stefan Goessner's original implem
 
 #### Evaluating Script Expressions
 
-Script expressions (i.e, `(...)` and `?(...)`) are statically evaluated via [static-eval](https://github.com/substack/static-eval) rather than using the underlying script engine directly.  That means both that the scope is limited to the instance variable (`@`), and only simple expressions (with no side effects) will be valid.  So for example, `?(@.length>10)` will be just fine to match arrays with more than ten elements, but `?(process.exit())` will not get evaluated since `process` would yield a `ReferenceError`.  This method is even safer than `vm.runInNewContext`, since the script engine itself is more limited and entirely distinct from the one running the application ocde.  See more details in the [implementation](https://github.com/substack/static-eval/blob/master/index.js) of the evaluator.
+Script expressions (i.e, `(...)` and `?(...)`) are statically evaluated via [static-eval](https://github.com/substack/static-eval) rather than using the underlying script engine directly.  That means both that the scope is limited to the instance variable (`@`), and only simple expressions (with no side effects) will be valid.  So for example, `?(@.length>10)` will be just fine to match arrays with more than ten elements, but `?(process.exit())` will not get evaluated since `process` would yield a `ReferenceError`.  This method is even safer than `vm.runInNewContext`, since the script engine itself is more limited and entirely distinct from the one running the application code.  See more details in the [implementation](https://github.com/substack/static-eval/blob/master/index.js) of the evaluator.
 
 #### Grammar
 
