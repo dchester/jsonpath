@@ -32,13 +32,13 @@ $                | The root object/element
 \*	         | Wildcard matching all objects/elements regardless their names
 []	         | Subscript operator
 [,]	         | Union operator for alternate names or array indices as a set
-[start:end:step] | Array slice operator borrowed from ES4 / Python
+[`start:end:step`] | Array slice operator borrowed from ES4 / Python
 ?()              | Applies a filter (script) expression via static evaluation
 ()	         | Script expression via static evaluation 
 
 Given this sample data set, see example expressions below:
 
-```
+```javascript
 {
   "store": {
     "book": [ 
@@ -148,15 +148,15 @@ var path = jp.parse('$..author');
 
 This implementation aims to be compatible with Stefan Goessner's original implementation with a few notable exceptions described below.
 
-### Evaluating Script Expressions
+#### Evaluating Script Expressions
 
 Script expressions (i.e, `(...)` and `?(...)`) are statically evaluated via [static-eval](https://github.com/substack/static-eval) rather than using the underlying script engine directly.  That means both that the scope is limited to the instance variable (`@`), and only simple expressions (with no side effects) will be valid.  So for example, `?(@.length>10)` will be just fine to match arrays with more than ten elements, but `?(process.exit())` will not get evaluated since `process` would yield a `ReferenceError`.  This method is even safer than `vm.runInNewContext`, since the script engine itself is more limited and entirely distinct from the one running the application ocde.  See more details in the [implementation](https://github.com/substack/static-eval/blob/master/index.js) of the evaluator.
 
-### Grammar
+#### Grammar
 
-This project uses a formal BNF grammar to parse JSONPath expressions, an attempt at reverse-engineering the intent of the original implementation, which parses via a series of creative regular expressions.  The regex approach can sometimes be forgiving for better or for worse (e.g., `$['store]` => `$['store']`), and in other cases, can be just plain wrong (e.g. `[` => `$`). 
+This project uses a formal BNF grammar to parse JSONPath expressions, an attempt at reverse-engineering the intent of the original implementation, which parses via a series of creative regular expressions.  The original regex approach can sometimes be forgiving for better or for worse (e.g., `$['store]` => `$['store']`), and in other cases, can be just plain wrong (e.g. `[` => `$`). 
 
-### Other Minor Differences
+#### Other Minor Differences
 
 As a result of using a real parser and static evaluation, there are some arguable bugs in the original library that have not been carried through here:
 
