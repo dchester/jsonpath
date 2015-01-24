@@ -1,5 +1,10 @@
 {
   "name": "json-path",
+  "version": "0.1.0",
+  "author": "david@fmail.co.uk",
+  "scripts": {
+    "test": "mocha -u tdd test && jscs lib && jshint lib"
+  },
   "dependencies": {
     "esprima": "1.2.2",
     "jison": "0.3.10",
@@ -7,6 +12,13 @@
     "underscore": "1.7.0"
   },
   "devDependencies": {
-    "mocha": "2.1.0"
-  }
+    "mocha": "2.1.0",
+    "jscs": "1.10.0",
+    "jshint": "2.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dchester/json-path"
+  },
+  "license": "MIT"
 }

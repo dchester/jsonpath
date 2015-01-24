@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/dchester/json-path.png?branch=master)](https://travis-ci.org/dchester/json-path)
+
 # json-path
 
 Query JavaScript objects with JSONPath expressions.  Robust / safe JSONPath engine for Node.js.
