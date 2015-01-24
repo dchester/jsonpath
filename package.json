@@ -3,7 +3,8 @@
   "dependencies": {
     "esprima": "1.2.2",
     "jison": "0.3.10",
-    "static-eval": "^0.2.3"
+    "static-eval": "0.2.3",
+    "underscore": "1.7.0"
   },
   "devDependencies": {
     "mocha": "2.1.0"

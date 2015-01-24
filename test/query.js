@@ -86,8 +86,9 @@ suite('json-path-query', function() {
     ]);
   });
 
-  test('path to match all elements', function() {
+  test('all elements', function() {
     var results = jp.nodes(data, '$..*');
+
     assert.deepEqual(results, [
       { path: [ '$', 'store' ], value: data.store },
       { path: [ '$', 'store', 'book' ], value: data.store.book },
@@ -117,6 +118,16 @@ suite('json-path-query', function() {
       { path: [ '$', 'store', 'bicycle', 'color' ], value: 'red' },
       { path: [ '$', 'store', 'bicycle', 'price' ], value: 19.95 }
     ]);
+  });
+
+  test('all elements via subscript wildcard', function() {
+    var results = jp.nodes(data, '$..*');
+    assert.deepEqual(jp.nodes(data, '$..[*]'), jp.nodes(data, '$..*'));
+  });
+
+  test('object subscript wildcard', function() {
+    var results = jp.query(data, '$.store[*]');
+    assert.deepEqual(results, [ data.store.book, data.store.bicycle ]);
   });
 
   test('no match returns empty array', function() {
@@ -160,6 +171,24 @@ suite('json-path-query', function() {
       { path: ['$', 'store', 'book'], value: data.store.book },
       { path: ['$', 'store', 'bicycle'], value: data.store.bicycle },
     ]);
+  });
+
+  test('nested parentheses eval', function() {
+    var pathExpression = '$..book[?( @.price && (@.price + 20 || false) )]'
+    var results = jp.query(data, pathExpression);
+    assert.deepEqual(results, data.store.book);
+  });
+
+  test('descendant subscript numeric literal', function() {
+    var data = [ 0, [ 1, 2, 3 ], [ 4, 5, 6 ] ];
+    var results = jp.query(data, '$..[0]');
+    assert.deepEqual(results, [ 0, 1, 4 ]);
+  });
+
+  test('descendant subscript numeric literal', function() {
+    var data = [ 0, 1, [ 2, 3, 4 ], [ 5, 6, 7, [ 8, 9 , 10 ] ] ];
+    var results = jp.query(data, '$..[0,1]');
+    assert.deepEqual(results, [ 0, 1, 2, 3, 5, 6, 8, 9 ]);
   });
 
 });
