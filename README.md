@@ -154,7 +154,7 @@ Script expressions (i.e, `(...)` and `?(...)`) are statically evaluated via [sta
 
 #### Grammar
 
-This project uses a formal BNF grammar to parse JSONPath expressions, an attempt at reverse-engineering the intent of the original implementation, which parses via a series of creative regular expressions.  The original regex approach can sometimes be forgiving for better or for worse (e.g., `$['store]` => `$['store']`), and in other cases, can be just plain wrong (e.g. `[` => `$`). 
+This project uses a formal BNF [grammar](https://github.com/dchester/json-path/blob/master/lib/grammar.js) to parse JSONPath expressions, an attempt at reverse-engineering the intent of the original implementation, which parses via a series of creative regular expressions.  The original regex approach can sometimes be forgiving for better or for worse (e.g., `$['store]` => `$['store']`), and in other cases, can be just plain wrong (e.g. `[` => `$`). 
 
 #### Other Minor Differences
 
@@ -164,7 +164,7 @@ As a result of using a real parser and static evaluation, there are some arguabl
 - final `step` arguments in slice operators may now be negative
 - script expressions may now contain `.` and `@` characters not referring to instance variables
 - subscripts no longer act as character slices on string elements
-- non-asci non-word characters are no-longer valid in member identifier names; use quoted subscript strings instead (e.g., `$['$']` instead of `$.$`)
+- non-ascii non-word characters are no-longer valid in member identifier names; use quoted subscript strings instead (e.g., `$['$']` instead of `$.$`)
 - unions now yield real unions with no duplicates rather than concatenated results
 
 ## License
