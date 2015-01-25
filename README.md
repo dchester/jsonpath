@@ -27,16 +27,16 @@ Here are syntax and examples adapted from [Stefan Goessner's original post](http
 
 JSONPath         | Description
 -----------------|------------
-$                | The root object/element
-@                | The current object/element
-.                | Child member operator
-..	         | Recursive descendant operator; JSONPath borrows this syntax from E4X
-\*	         | Wildcard matching all objects/elements regardless their names
-[]	         | Subscript operator
-[,]	         | Union operator for alternate names or array indices as a set
-[`start:end:step`] | Array slice operator borrowed from ES4 / Python
-?()              | Applies a filter (script) expression via static evaluation
-()	         | Script expression via static evaluation 
+`$`               | The root object/element
+`@`                | The current object/element
+`.`                | Child member operator
+`..`	         | Recursive descendant operator; JSONPath borrows this syntax from E4X
+`*`	         | Wildcard matching all objects/elements regardless their names
+`[]`	         | Subscript operator
+`[,]`	         | Union operator for alternate names or array indices as a set
+`[start:end:step]` | Array slice operator borrowed from ES4 / Python
+`?()`              | Applies a filter (script) expression via static evaluation
+`()`	         | Script expression via static evaluation 
 
 Given this sample data set, see example expressions below:
 
@@ -80,18 +80,18 @@ Example JSONPath expressions:
 
 JSONPath                      | Description
 ------------------------------|------------
-$.store.book[\*].author       | The authors of all books in the store
-$..author                     | All authors
-$.store.\*                    | All things in store, which are some books and a red bicycle
-$.store..price                | The price of everything in the store
-$..book[2]                    | The third book via array subscript
-$..book[(@.length-1)]         | The third book via script subscript
-$..book[-1:]                  | The last book in order
-$..book[0,1]                  | The first two books via subscript union
-$..book[:2]                   | The first two books via subscript array slice
-$..book[?(@.isbn)]            | Filter all books with isbn number
-$..book[?(@.price<10)]        | Filter all books cheapier than 10
-$..\*                         | All members of JSON structure
+`$.store.book[*].author`       | The authors of all books in the store
+`$..author`                     | All authors
+`$.store.*`                    | All things in store, which are some books and a red bicycle
+`$.store..price`                | The price of everything in the store
+`$..book[2]`                    | The third book via array subscript
+`$..book[(@.length-1)]`         | The third book via script subscript
+`$..book[-1:]`                  | The last book in order
+`$..book[0,1]`                  | The first two books via subscript union
+`$..book[:2]`                  | The first two books via subscript array slice
+`$..book[?(@.isbn)]`            | Filter all books with isbn number
+`$..book[?(@.price<10)]`        | Filter all books cheapier than 10
+`$..*`                         | All members of JSON structure
 
 
 ## Methods
