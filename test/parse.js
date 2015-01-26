@@ -115,6 +115,15 @@ suite('parse', function() {
     ])
   });
 
+  test('parse path with leading member and followers', function() {
+    var path = jp.parse('Request.prototype.end');
+    assert.deepEqual(path, [
+      { operation: 'member', scope: 'child', expression: { type: 'identifier', value: 'Request' } },
+      { operation: 'member', scope: 'child', expression: { type: 'identifier', value: 'prototype' } },
+      { operation: 'member', scope: 'child', expression: { type: 'identifier', value: 'end' } }
+    ])
+  });
+
 });
 
 suite('parse-negative', function() {
