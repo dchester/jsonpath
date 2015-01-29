@@ -21,6 +21,13 @@ var names = jp.query(cities, '$..name');
 // [ "London", "Berlin", "Madrid", "Rome" ]
 ```
 
+## Install
+
+Install from npm:
+```bash
+$ npm install jsonpath
+```
+
 ## JSONPath Syntax
 
 Here are syntax and examples adapted from [Stefan Goessner's original post](http://goessner.net/articles/JsonPath/) introducing JSONPath in 2007.
