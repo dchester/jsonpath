@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/dchester/json-path.png?branch=master)](https://travis-ci.org/dchester/json-path)
+[![Build Status](https://travis-ci.org/dchester/jsonpath.png?branch=master)](https://travis-ci.org/dchester/jsonpath)
 
-# json-path
+# jsonpath
 
 Query JavaScript objects with JSONPath expressions.  Robust / safe JSONPath engine for Node.js.
 
@@ -15,7 +15,7 @@ var cities = [
   { name: "Rome",   "population": 2870528 }
 ];
 
-var jp = require('json-path');
+var jp = require('jsonpath');
 var names = jp.query(cities, '$..name');
 
 // [ "London", "Berlin", "Madrid", "Rome" ]
@@ -187,7 +187,7 @@ Script expressions (i.e, `(...)` and `?(...)`) are statically evaluated via [sta
 
 #### Grammar
 
-This project uses a formal BNF [grammar](https://github.com/dchester/json-path/blob/master/lib/grammar.js) to parse JSONPath expressions, an attempt at reverse-engineering the intent of the original implementation, which parses via a series of creative regular expressions.  The original regex approach can sometimes be forgiving for better or for worse (e.g., `$['store]` => `$['store']`), and in other cases, can be just plain wrong (e.g. `[` => `$`). 
+This project uses a formal BNF [grammar](https://github.com/dchester/jsonpath/blob/master/lib/grammar.js) to parse JSONPath expressions, an attempt at reverse-engineering the intent of the original implementation, which parses via a series of creative regular expressions.  The original regex approach can sometimes be forgiving for better or for worse (e.g., `$['store]` => `$['store']`), and in other cases, can be just plain wrong (e.g. `[` => `$`). 
 
 #### Other Minor Differences
 

@@ -3,7 +3,7 @@ var jp = require('../');
 
 var data = require('./data/store.json');
 
-suite('json-path-query', function() {
+suite('query', function() {
 
   test('first-level member', function() {
     var results = jp.nodes(data, '$.store');
