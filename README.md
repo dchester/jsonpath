@@ -133,6 +133,29 @@ var nodes = jp.nodes(data, '$..author');
 // ]
 ```
 
+#### jp.value(obj, pathExpression, [newValue])
+
+Returns the value of the first element matching `pathExpression`.  If `newValue` is provided, sets the value of the first matching element and returns the new value.
+
+#### jp.parent(obj, pathExpression)
+
+Returns the parent of the first matched element.
+
+#### jp.apply(obj, pathExpression, fn)
+
+Runs the supplied function `fn` on each matching element, and replaces each matching element with the return value from the function.  The function accepts the value of the matching element as its only parameter.  Returns matching nodes with their updated values.
+
+
+```javascript
+var nodes = jp.apply(data, '$..author', function(value) { return value.toUpperCase() });
+// [
+//   { path: ['$', 'store', 'book', 0, 'author'], value: 'NIGEL REES' },
+//   { path: ['$', 'store', 'book', 1, 'author'], value: 'EVELYN WAUGH' },
+//   { path: ['$', 'store', 'book', 2, 'author'], value: 'HERMAN MELVILLE' },
+//   { path: ['$', 'store', 'book', 3, 'author'], value: 'J. R. R. TOLKIEN' }
+// ]
+```
+
 #### jp.parse(pathExpression)
 
 Parse the provided JSONPath expression into path components and their associated operations.
@@ -145,6 +168,14 @@ var path = jp.parse('$..author');
 // ]
 ```
 
+#### jp.stringify(path)
+
+Returns a path expression in string form, given a path.  The supplied path may either be a flat array of keys, as returned by `jp.nodes` for example, or may alternatively be a fully parsed path expression in the form of an array of path components as returned by `jp.parse`.
+
+```javascript
+var pathExpression = jp.stringify(['$', 'store', 'book', 0, 'author']);
+// "$.store.book[0].author"
+```
 
 ## Differences from Original Implementation
 

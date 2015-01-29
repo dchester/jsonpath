@@ -191,5 +191,17 @@ suite('json-path-query', function() {
     assert.deepEqual(results, [ 0, 1, 2, 3, 5, 6, 8, 9 ]);
   });
 
+  test('throws for no input', function() {
+    assert.throws(function() { jp.query() }, /needs to be an object/);
+  });
+
+  test('throws for bad input', function() {
+    assert.throws(function() { jp.query("string", "string") }, /needs to be an object/);
+  });
+
+  test('throws for bad input', function() {
+    assert.throws(function() { jp.query({}, null) }, /we need a path/);
+  });
+
 });
 
