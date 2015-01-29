@@ -139,7 +139,7 @@ Returns the value of the first element matching `pathExpression`.  If `newValue`
 
 #### jp.parent(obj, pathExpression)
 
-Returns the parent of the first matched element.
+Returns the parent of the first matching element.
 
 #### jp.apply(obj, pathExpression, fn)
 
