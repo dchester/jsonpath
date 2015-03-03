@@ -179,6 +179,17 @@ suite('query', function() {
     assert.deepEqual(results, data.store.book);
   });
 
+  test('array indexes from 0 to 100', function() {
+    var data = [];
+    for (var i = 0; i <= 100; ++i)
+      data[i] = Math.random();
+
+    for (var i = 0; i <= 100; ++i) {
+      var results = jp.query(data, '$[' + i.toString() +  ']');
+      assert.deepEqual(results, [data[i]]);
+    }
+  });
+
   test('descendant subscript numeric literal', function() {
     var data = [ 0, [ 1, 2, 3 ], [ 4, 5, 6 ] ];
     var results = jp.query(data, '$..[0]');
