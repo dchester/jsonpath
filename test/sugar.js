@@ -30,4 +30,23 @@ suite('sugar', function() {
     assert.equal(data.b, 5000);
   });
 
+  test('value method sets new key and value', function() {
+    var data = {};
+    var a = jp.value(data, '$.a', 1);
+    var c = jp.value(data, '$.b.c', 2);
+    assert.equal(a, 1);
+    assert.equal(data.a, 1);
+    assert.equal(c, 2);
+    assert.equal(data.b.c, 2);
+  });
+
+  test('value method sets new array value', function() {
+    var data = {};
+    var v1 = jp.value(data, '$.a.d[0]', 4);
+    var v2 = jp.value(data, '$.a.d[1]', 5);
+    assert.equal(v1, 4);
+    assert.equal(v2, 5);
+    assert.deepEqual(data.a.d, [4, 5]);
+  });
+
 });
