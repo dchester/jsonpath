@@ -165,6 +165,11 @@ suite('query', function() {
     assert.deepEqual(results, [ { path: ['$', 'store'], value: data.store} ]);
   });
 
+  test('union of three array slices', function() {
+    var results = jp.query(data, "$.store.book[0:1,1:2,2:3]");
+    assert.deepEqual(results, data.store.book.slice(0,3));
+  });
+
   test('union of subscript string literal keys', function() {
     var results = jp.nodes(data, "$.store['book','bicycle']");
     assert.deepEqual(results, [
@@ -172,6 +177,61 @@ suite('query', function() {
       { path: ['$', 'store', 'bicycle'], value: data.store.bicycle },
     ]);
   });
+
+  test('union of subscript string literal three keys', function() {
+    var results = jp.nodes(data, "$.store.book[0]['title','author','price']");
+    assert.deepEqual(results, [
+      { path: ['$', 'store', 'book', '0', 'title'], value: data.store.book[0].title },
+      { path: ['$', 'store', 'book', '0', 'author'], value: data.store.book[0].author },
+      { path: ['$', 'store', 'book', '0', 'price'], value: data.store.book[0].price }
+    ]);
+  });
+
+  test('union of subscript integer three keys followed by member-child-identifier', function() {
+    var results = jp.nodes(data, "$.store.book[1,2,3]['title']");
+    assert.deepEqual(results, [
+      { path: ['$', 'store', 'book', '1', 'title'], value: data.store.book[1].title },
+      { path: ['$', 'store', 'book', '2', 'title'], value: data.store.book[2].title },
+      { path: ['$', 'store', 'book', '3', 'title'], value: data.store.book[3].title }
+    ]);
+  });
+
+  test('union of subscript integer three keys followed by union of subscript string literal three keys', function() {
+    var results = jp.nodes(data, "$.store.book[0,1,2,3]['title','author','price']");
+    assert.deepEqual(results, [
+      { path: ['$', 'store', 'book', '0', 'title'], value: data.store.book[0].title },
+      { path: ['$', 'store', 'book', '0', 'author'], value: data.store.book[0].author },
+      { path: ['$', 'store', 'book', '0', 'price'], value: data.store.book[0].price },
+      { path: ['$', 'store', 'book', '1', 'title'], value: data.store.book[1].title },
+      { path: ['$', 'store', 'book', '1', 'author'], value: data.store.book[1].author },
+      { path: ['$', 'store', 'book', '1', 'price'], value: data.store.book[1].price },
+      { path: ['$', 'store', 'book', '2', 'title'], value: data.store.book[2].title },
+      { path: ['$', 'store', 'book', '2', 'author'], value: data.store.book[2].author },
+      { path: ['$', 'store', 'book', '2', 'price'], value: data.store.book[2].price },
+      { path: ['$', 'store', 'book', '3', 'title'], value: data.store.book[3].title },
+      { path: ['$', 'store', 'book', '3', 'author'], value: data.store.book[3].author },
+      { path: ['$', 'store', 'book', '3', 'price'], value: data.store.book[3].price }
+    ]);
+  });
+
+  test('union of subscript 4 array slices followed by union of subscript string literal three keys', function() {
+    var results = jp.nodes(data, "$.store.book[0:1,1:2,2:3,3:4]['title','author','price']");
+    assert.deepEqual(results, [
+      { path: ['$', 'store', 'book', '0', 'title'], value: data.store.book[0].title },
+      { path: ['$', 'store', 'book', '0', 'author'], value: data.store.book[0].author },
+      { path: ['$', 'store', 'book', '0', 'price'], value: data.store.book[0].price },
+      { path: ['$', 'store', 'book', '1', 'title'], value: data.store.book[1].title },
+      { path: ['$', 'store', 'book', '1', 'author'], value: data.store.book[1].author },
+      { path: ['$', 'store', 'book', '1', 'price'], value: data.store.book[1].price },
+      { path: ['$', 'store', 'book', '2', 'title'], value: data.store.book[2].title },
+      { path: ['$', 'store', 'book', '2', 'author'], value: data.store.book[2].author },
+      { path: ['$', 'store', 'book', '2', 'price'], value: data.store.book[2].price },
+      { path: ['$', 'store', 'book', '3', 'title'], value: data.store.book[3].title },
+      { path: ['$', 'store', 'book', '3', 'author'], value: data.store.book[3].author },
+      { path: ['$', 'store', 'book', '3', 'price'], value: data.store.book[3].price }
+    ]);
+  });
+
 
   test('nested parentheses eval', function() {
     var pathExpression = '$..book[?( @.price && (@.price + 20 || false) )]'
