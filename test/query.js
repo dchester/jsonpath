@@ -170,6 +170,11 @@ suite('query', function() {
     assert.deepEqual(results, data.store.book.slice(0,3));
   });
 
+  test('slice with step > 1', function() {
+    var results = jp.query(data, "$.store.book[0:4:2]");
+    assert.deepEqual(results, [ data.store.book[0], data.store.book[2]]);
+  });
+
   test('union of subscript string literal keys', function() {
     var results = jp.nodes(data, "$.store['book','bicycle']");
     assert.deepEqual(results, [
