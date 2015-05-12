@@ -186,54 +186,54 @@ suite('query', function() {
   test('union of subscript string literal three keys', function() {
     var results = jp.nodes(data, "$.store.book[0]['title','author','price']");
     assert.deepEqual(results, [
-      { path: ['$', 'store', 'book', '0', 'title'], value: data.store.book[0].title },
-      { path: ['$', 'store', 'book', '0', 'author'], value: data.store.book[0].author },
-      { path: ['$', 'store', 'book', '0', 'price'], value: data.store.book[0].price }
+      { path: ['$', 'store', 'book', 0, 'title'], value: data.store.book[0].title },
+      { path: ['$', 'store', 'book', 0, 'author'], value: data.store.book[0].author },
+      { path: ['$', 'store', 'book', 0, 'price'], value: data.store.book[0].price }
     ]);
   });
 
   test('union of subscript integer three keys followed by member-child-identifier', function() {
     var results = jp.nodes(data, "$.store.book[1,2,3]['title']");
     assert.deepEqual(results, [
-      { path: ['$', 'store', 'book', '1', 'title'], value: data.store.book[1].title },
-      { path: ['$', 'store', 'book', '2', 'title'], value: data.store.book[2].title },
-      { path: ['$', 'store', 'book', '3', 'title'], value: data.store.book[3].title }
+      { path: ['$', 'store', 'book', 1, 'title'], value: data.store.book[1].title },
+      { path: ['$', 'store', 'book', 2, 'title'], value: data.store.book[2].title },
+      { path: ['$', 'store', 'book', 3, 'title'], value: data.store.book[3].title }
     ]);
   });
 
   test('union of subscript integer three keys followed by union of subscript string literal three keys', function() {
     var results = jp.nodes(data, "$.store.book[0,1,2,3]['title','author','price']");
     assert.deepEqual(results, [
-      { path: ['$', 'store', 'book', '0', 'title'], value: data.store.book[0].title },
-      { path: ['$', 'store', 'book', '0', 'author'], value: data.store.book[0].author },
-      { path: ['$', 'store', 'book', '0', 'price'], value: data.store.book[0].price },
-      { path: ['$', 'store', 'book', '1', 'title'], value: data.store.book[1].title },
-      { path: ['$', 'store', 'book', '1', 'author'], value: data.store.book[1].author },
-      { path: ['$', 'store', 'book', '1', 'price'], value: data.store.book[1].price },
-      { path: ['$', 'store', 'book', '2', 'title'], value: data.store.book[2].title },
-      { path: ['$', 'store', 'book', '2', 'author'], value: data.store.book[2].author },
-      { path: ['$', 'store', 'book', '2', 'price'], value: data.store.book[2].price },
-      { path: ['$', 'store', 'book', '3', 'title'], value: data.store.book[3].title },
-      { path: ['$', 'store', 'book', '3', 'author'], value: data.store.book[3].author },
-      { path: ['$', 'store', 'book', '3', 'price'], value: data.store.book[3].price }
+      { path: ['$', 'store', 'book', 0, 'title'], value: data.store.book[0].title },
+      { path: ['$', 'store', 'book', 0, 'author'], value: data.store.book[0].author },
+      { path: ['$', 'store', 'book', 0, 'price'], value: data.store.book[0].price },
+      { path: ['$', 'store', 'book', 1, 'title'], value: data.store.book[1].title },
+      { path: ['$', 'store', 'book', 1, 'author'], value: data.store.book[1].author },
+      { path: ['$', 'store', 'book', 1, 'price'], value: data.store.book[1].price },
+      { path: ['$', 'store', 'book', 2, 'title'], value: data.store.book[2].title },
+      { path: ['$', 'store', 'book', 2, 'author'], value: data.store.book[2].author },
+      { path: ['$', 'store', 'book', 2, 'price'], value: data.store.book[2].price },
+      { path: ['$', 'store', 'book', 3, 'title'], value: data.store.book[3].title },
+      { path: ['$', 'store', 'book', 3, 'author'], value: data.store.book[3].author },
+      { path: ['$', 'store', 'book', 3, 'price'], value: data.store.book[3].price }
     ]);
   });
 
   test('union of subscript 4 array slices followed by union of subscript string literal three keys', function() {
     var results = jp.nodes(data, "$.store.book[0:1,1:2,2:3,3:4]['title','author','price']");
     assert.deepEqual(results, [
-      { path: ['$', 'store', 'book', '0', 'title'], value: data.store.book[0].title },
-      { path: ['$', 'store', 'book', '0', 'author'], value: data.store.book[0].author },
-      { path: ['$', 'store', 'book', '0', 'price'], value: data.store.book[0].price },
-      { path: ['$', 'store', 'book', '1', 'title'], value: data.store.book[1].title },
-      { path: ['$', 'store', 'book', '1', 'author'], value: data.store.book[1].author },
-      { path: ['$', 'store', 'book', '1', 'price'], value: data.store.book[1].price },
-      { path: ['$', 'store', 'book', '2', 'title'], value: data.store.book[2].title },
-      { path: ['$', 'store', 'book', '2', 'author'], value: data.store.book[2].author },
-      { path: ['$', 'store', 'book', '2', 'price'], value: data.store.book[2].price },
-      { path: ['$', 'store', 'book', '3', 'title'], value: data.store.book[3].title },
-      { path: ['$', 'store', 'book', '3', 'author'], value: data.store.book[3].author },
-      { path: ['$', 'store', 'book', '3', 'price'], value: data.store.book[3].price }
+      { path: ['$', 'store', 'book', 0, 'title'], value: data.store.book[0].title },
+      { path: ['$', 'store', 'book', 0, 'author'], value: data.store.book[0].author },
+      { path: ['$', 'store', 'book', 0, 'price'], value: data.store.book[0].price },
+      { path: ['$', 'store', 'book', 1, 'title'], value: data.store.book[1].title },
+      { path: ['$', 'store', 'book', 1, 'author'], value: data.store.book[1].author },
+      { path: ['$', 'store', 'book', 1, 'price'], value: data.store.book[1].price },
+      { path: ['$', 'store', 'book', 2, 'title'], value: data.store.book[2].title },
+      { path: ['$', 'store', 'book', 2, 'author'], value: data.store.book[2].author },
+      { path: ['$', 'store', 'book', 2, 'price'], value: data.store.book[2].price },
+      { path: ['$', 'store', 'book', 3, 'title'], value: data.store.book[3].title },
+      { path: ['$', 'store', 'book', 3, 'author'], value: data.store.book[3].author },
+      { path: ['$', 'store', 'book', 3, 'price'], value: data.store.book[3].price }
     ]);
   });
 
