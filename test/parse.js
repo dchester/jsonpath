@@ -140,4 +140,13 @@ suite('parse-negative', function() {
     assert.throws(function() { var path = jp.parse('()') })
   });
 
+  test('parser ast is reinitialized after parse() throws', function() {
+    assert.throws(function() { var path = jp.parse('store.book...') })
+    var path = jp.parse('$..price');
+    assert.deepEqual(path, [
+      { "expression": { "type": "root", "value": "$" } },
+      { "expression": { "type": "identifier", "value": "price" }, "operation": "member", "scope": "descendant"}
+    ])
+  });
+
 });
