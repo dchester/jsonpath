@@ -49,4 +49,10 @@ suite('sugar', function() {
     assert.deepEqual(data.a.d, [4, 5]);
   });
 
+  test('value method sets non-literal key', function() {
+    var data = { "list": [ { "index": 0, "value": "default" }, { "index": 1, "value": "default" } ] };
+    jp.value(data, '$.list[?(@.index == 1)].value', "test");
+    assert.equal(data.list[1].value, "test");
+  });
+
 });
