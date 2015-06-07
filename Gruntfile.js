@@ -1,13 +1,14 @@
 module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        outputFolder: "dist",
+        outputFolder: ".",
 
         browserify: {
             main: {
                 src: ['index.js'],
                 dest: '<%= outputFolder %>/<%= pkg.name %>.js',
                 options: {
+                    browserifyOptions: { standalone: '<%= pkg.name %>' },
                     banner: '/*! <%= pkg.name %> <%= pkg.version %> */\n',
                     alias: {
                         "jsonpath": "./index.js"
