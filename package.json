@@ -15,7 +15,10 @@
   "devDependencies": {
     "mocha": "2.1.0",
     "jscs": "1.10.0",
-    "jshint": "2.6.0"
+    "jshint": "2.6.0",
+    "grunt": "~0.4.1",
+    "grunt-browserify": "latest",
+    "grunt-contrib-uglify": "latest"
   },
   "repository": {
     "type": "git",
