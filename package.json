@@ -4,7 +4,8 @@
   "version": "0.1.5",
   "author": "david@fmail.co.uk",
   "scripts": {
-    "test": "mocha -u tdd test && jscs lib && jshint lib"
+    "test": "mocha -u tdd test && jscs lib && jshint lib",
+    "generate": "node bin/generate_parser.js > generated/parser.js"
   },
   "dependencies": {
     "esprima": "1.2.2",
