@@ -279,5 +279,9 @@ suite('query', function() {
     assert.throws(function() { jp.query({}, null) }, /we need a path/);
   });
 
+  test('throws for bad input', function() {
+    assert.throws(function() { jp.query({}, 42) }, /we need a path/);
+  });
+
 });
 
