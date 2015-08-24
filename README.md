@@ -98,6 +98,7 @@ JSONPath                      | Description
 `$..book[:2]`                  | The first two books via subscript array slice
 `$..book[?(@.isbn)]`            | Filter all books with isbn number
 `$..book[?(@.price<10)]`        | Filter all books cheaper than 10
+`$..book[?(@.price==8.95)]`        | Filter all books that cost 8.95
 `$..*`                         | All members of JSON structure
 
 
