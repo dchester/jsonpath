@@ -1,4 +1,4 @@
-/*! jsonpath 0.1.5 */
+/*! jsonpath 0.2.0 */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jsonpath = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"./aesprim":[function(require,module,exports){
 /*
@@ -4594,8 +4594,8 @@ var grammar = {
                 [ 'Q_STRING',  "$$ = $1" ] ]
     },
 
-    moduleInclude: fs.readFileSync("include/module.js"),
-    actionInclude: fs.readFileSync("include/action.js")
+    moduleInclude: fs.readFileSync(require.resolve("../include/module.js")),
+    actionInclude: fs.readFileSync(require.resolve("../include/action.js"))
 };
 
 module.exports = grammar;
@@ -4686,7 +4686,7 @@ Handlers.prototype._fns = {
     return unique(results);
   },
 
-  'subscript-descendant-union': function(component, partial) {
+  'subscript-descendant-union': function(component, partial, count) {
 
     var jp = require('..');
     var self = this;
@@ -4695,6 +4695,7 @@ Handlers.prototype._fns = {
     var nodes = jp.nodes(partial, '$..*').slice(1);
 
     nodes.forEach(function(node) {
+      if (results.length >= count) return;
       component.expression.value.forEach(function(component) {
         var _component = { operation: 'subscript', scope: 'child', expression: component.expression };
         var handler = self.resolve(_component);
@@ -4706,7 +4707,7 @@ Handlers.prototype._fns = {
     return unique(results);
   },
 
-  'subscript-child-filter_expression': function(component, partial) {
+  'subscript-child-filter_expression': function(component, partial, count) {
 
     // slice out the expression from ?(expression)
     var src = component.expression.value.slice(2, -1);
@@ -4716,11 +4717,11 @@ Handlers.prototype._fns = {
       return evaluate(ast, { '@': value });
     }
 
-    return this.descend(partial, null, passable);
+    return this.descend(partial, null, passable, count);
 
   },
 
-  'subscript-descendant-filter_expression': function(component, partial) {
+  'subscript-descendant-filter_expression': function(component, partial, count) {
 
     // slice out the expression from ?(expression)
     var src = component.expression.value.slice(2, -1);
@@ -4730,7 +4731,7 @@ Handlers.prototype._fns = {
       return evaluate(ast, { '@': value });
     }
 
-    return this.traverse(partial, null, passable);
+    return this.traverse(partial, null, passable, count);
   },
 
   'subscript-child-script_expression': function(component, partial) {
@@ -4784,7 +4785,7 @@ function is_object(val) {
 
 function traverser(recurse) {
 
-  return function(partial, ref, passable) {
+  return function(partial, ref, passable, count) {
 
     var value = partial.value;
     var path = partial.path;
@@ -4795,22 +4796,26 @@ function traverser(recurse) {
 
       if (is_array(value)) {
         value.forEach(function(element, index) {
+          if (results.length >= count) { return }
           if (passable(index, element, ref)) {
             results.push({ path: path.concat(index), value: element });
           }
         });
         value.forEach(function(element, index) {
+          if (results.length >= count) { return }
           if (recurse) {
             descend(element, path.concat(index));
           }
         });
       } else if (is_object(value)) {
         this.keys(value).forEach(function(k) {
+          if (results.length >= count) { return }
           if (passable(k, value[k], ref)) {
             results.push({ path: path.concat(k), value: value[k] });
           }
         })
         this.keys(value).forEach(function(k) {
+          if (results.length >= count) { return }
           if (recurse) {
             descend(value[k], path.concat(k));
           }
@@ -4823,14 +4828,14 @@ function traverser(recurse) {
 }
 
 function _descend(passable) {
-  return function(component, partial) {
-    return this.descend(partial, component.expression.value, passable);
+  return function(component, partial, count) {
+    return this.descend(partial, component.expression.value, passable, count);
   }
 }
 
 function _traverse(passable) {
-  return function(component, partial) {
-    return this.traverse(partial, component.expression.value, passable);
+  return function(component, partial, count) {
+    return this.traverse(partial, component.expression.value, passable, count);
   }
 }
 
@@ -4849,6 +4854,8 @@ function unique(results) {
 module.exports = Handlers;
 
 },{"..":"jsonpath","./aesprim":"./aesprim","./index":5,"./slice":7,"static-eval":15,"underscore":8}],5:[function(require,module,exports){
+/* global toString */
+
 var assert = require('assert');
 var dict = require('./dict');
 var Parser = require('./parser');
@@ -4864,17 +4871,9 @@ JSONPath.prototype.initialize = function() {
 };
 
 JSONPath.prototype.parse = function(string) {
-  assert.ok(string, "we need a path");
+  assert.ok(_is_string(string), "we need a path");
   return this.parser.parse(string);
 };
-
-JSONPath.prototype._first = function(obj, path) {
-
-  assert.ok(obj instanceof Object, "obj needs to be an object");
-  assert.ok(Array.isArray(path), "we need a path array");
-
-  return this.query(obj, this.stringify(path)).shift();
-}
 
 JSONPath.prototype.parent = function(obj, string) {
 
@@ -4883,7 +4882,7 @@ JSONPath.prototype.parent = function(obj, string) {
 
   var node = this.nodes(obj, string)[0];
   var key = node.path.pop(); /* jshint unused:false */
-  return this._first(obj, node.path);
+  return this.value(obj, node.path);
 }
 
 JSONPath.prototype.apply = function(obj, string, fn) {
@@ -4904,20 +4903,19 @@ JSONPath.prototype.apply = function(obj, string, fn) {
   return nodes;
 }
 
-JSONPath.prototype.value = function(obj, string, value) {
+JSONPath.prototype.value = function(obj, path, value) {
 
   assert.ok(obj instanceof Object, "obj needs to be an object");
-  assert.ok(string, "we need a path");
+  assert.ok(path, "we need a path");
 
   if (arguments.length >= 3) {
-    var node = this.nodes(obj, string).shift();
-    if (!node) return this._vivify(obj, string, value);
+    var node = this.nodes(obj, path).shift();
+    if (!node) return this._vivify(obj, path, value);
     var key = node.path.slice(-1).shift();
     var parent = this.parent(obj, this.stringify(node.path));
     parent[key] = value;
   }
-
-  return this.query(obj, string)[0];
+  return this.query(obj, this.stringify(path), 1).shift();
 }
 
 JSONPath.prototype._vivify = function(obj, string, value) {
@@ -4932,10 +4930,10 @@ JSONPath.prototype._vivify = function(obj, string, value) {
 
   var setValue = function(path, value) {
     var key = path.pop();
-    var node = self._first(obj, path);
+    var node = self.value(obj, path);
     if (!node) {
       setValue(path.concat(), typeof key === 'string' ? {} : []);
-      node = self._first(obj, path);
+      node = self.value(obj, path);
     }
     node[key] = value;
   }
@@ -4943,32 +4941,34 @@ JSONPath.prototype._vivify = function(obj, string, value) {
   return this.query(obj, string)[0];
 }
 
-JSONPath.prototype.query = function(obj, string) {
+JSONPath.prototype.query = function(obj, string, count) {
 
   assert.ok(obj instanceof Object, "obj needs to be an object");
-  assert.ok(string, "we need a path");
+  assert.ok(_is_string(string), "we need a path");
 
-  var results = this.nodes(obj, string)
+  var results = this.nodes(obj, string, count)
     .map(function(r) { return r.value });
 
   return results;
 };
 
-JSONPath.prototype.paths = function(obj, string) {
+JSONPath.prototype.paths = function(obj, string, count) {
 
   assert.ok(obj instanceof Object, "obj needs to be an object");
   assert.ok(string, "we need a path");
 
-  var results = this.nodes(obj, string)
+  var results = this.nodes(obj, string, count)
     .map(function(r) { return r.path });
 
   return results;
 };
 
-JSONPath.prototype.nodes = function(obj, string) {
+JSONPath.prototype.nodes = function(obj, string, count) {
 
   assert.ok(obj instanceof Object, "obj needs to be an object");
   assert.ok(string, "we need a path");
+
+  if (count === 0) return [];
 
   var path = this.parser.parse(string);
   var handlers = this.handlers;
@@ -4982,11 +4982,14 @@ JSONPath.prototype.nodes = function(obj, string) {
 
   path.forEach(function(component, index) {
 
+    if (matches.length >= count) return;
     var handler = handlers.resolve(component);
     var _partials = [];
 
     partials.forEach(function(p) {
-      var results = handler(component, p);
+
+      if (matches.length >= count) return;
+      var results = handler(component, p, count);
 
       if (index == path.length - 1) {
         // if we're through the components we're done
@@ -5001,7 +5004,7 @@ JSONPath.prototype.nodes = function(obj, string) {
 
   });
 
-  return matches;
+  return count ? matches.slice(0, count) : matches;
 };
 
 JSONPath.prototype.stringify = function(path) {
@@ -5088,6 +5091,10 @@ JSONPath.prototype._normalize = function(path) {
   throw new Error("couldn't understand path " + path);
 }
 
+function _is_string(obj) {
+  return toString.call(obj) == '[object String]';
+}
+
 JSONPath.Handlers = Handlers;
 JSONPath.Parser = Parser;
 
@@ -5107,7 +5114,7 @@ var Parser = function() {
 
 };
 
-//Parser.grammar = grammar;
+Parser.grammar = grammar;
 module.exports = Parser;
 
 },{"../generated/parser":1,"./grammar":3}],7:[function(require,module,exports){
