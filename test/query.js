@@ -86,6 +86,22 @@ suite('query', function() {
     ]);
   });
 
+  test('first ten of all elements', function() {
+    var results = jp.nodes(data, '$..*', 10);
+    assert.deepEqual(results, [
+      { path: [ '$', 'store' ], value: data.store },
+      { path: [ '$', 'store', 'book' ], value: data.store.book },
+      { path: [ '$', 'store', 'bicycle' ], value: data.store.bicycle },
+      { path: [ '$', 'store', 'book', 0 ], value: data.store.book[0] },
+      { path: [ '$', 'store', 'book', 1 ], value: data.store.book[1] },
+      { path: [ '$', 'store', 'book', 2 ], value: data.store.book[2] },
+      { path: [ '$', 'store', 'book', 3 ], value: data.store.book[3] },
+      { path: [ '$', 'store', 'book', 0, 'category' ], value: 'reference' },
+      { path: [ '$', 'store', 'book', 0, 'author' ], value: 'Nigel Rees' },
+      { path: [ '$', 'store', 'book', 0, 'title' ], value: 'Sayings of the Century' }
+    ])
+  });
+
   test('all elements', function() {
     var results = jp.nodes(data, '$..*');
 

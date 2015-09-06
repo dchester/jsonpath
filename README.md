@@ -105,18 +105,19 @@ JSONPath                      | Description
 
 ## Methods
 
-#### jp.query(obj, pathExpression)
+#### jp.query(obj, pathExpression[, count])
 
-Find elements in `obj` matching `pathExpression`.  Returns an array of elements that satisfy the provided JSONPath expression, or an empty array if none were matched.
+Find elements in `obj` matching `pathExpression`.  Returns an array of elements that satisfy the provided JSONPath expression, or an empty array if none were matched.  Returns only first `count` elements if specified.
 
 ```javascript
 var authors = jp.query(data, '$..author');
 // [ 'Nigel Rees', 'Evelyn Waugh', 'Herman Melville', 'J. R. R. Tolkien' ]
 ```
 
-#### jp.paths(obj, pathExpression)
+#### jp.paths(obj, pathExpression[, count])
 
-Find elements in `obj` matching `pathExpression`.  Returns an array of element paths that satisfy the provided JSONPath expression. Each path is itself an array of keys representing the location within `obj` of the matching element.
+Find paths to elements in `obj` matching `pathExpression`.  Returns an array of element paths that satisfy the provided JSONPath expression. Each path is itself an array of keys representing the location within `obj` of the matching element.  Returns only first `count` paths if specified.
+
 
 ```javascript
 var paths = jp.paths(data, '$..author');
@@ -128,9 +129,9 @@ var paths = jp.paths(data, '$..author');
 // ]
 ```
 
-#### jp.nodes(obj, pathExpression)
+#### jp.nodes(obj, pathExpression[, count])
 
-Find elements and their corresponding paths in `obj` matching `pathExpression`.  Returns an array of node objects where each node has a `path` containing an array of keys representing the location within `obj`, and a `value` pointing to the matched element.
+Find elements and their corresponding paths in `obj` matching `pathExpression`.  Returns an array of node objects where each node has a `path` containing an array of keys representing the location within `obj`, and a `value` pointing to the matched element.  Returns only first `count` nodes if specified.
 
 ```javascript
 var nodes = jp.nodes(data, '$..author');

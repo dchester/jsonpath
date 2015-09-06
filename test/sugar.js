@@ -55,4 +55,10 @@ suite('sugar', function() {
     assert.equal(data.list[1].value, "test");
   });
 
+  test('paths with a count gets us back count many paths', function() {
+    data = [ { a: [ 1, 2, 3 ], b: [ -1, -2, -3 ] }, { } ]
+    paths = jp.paths(data, '$..*', 3)
+    assert.deepEqual(paths, [ ['$', '0'], ['$', '1'], ['$', '0', 'a'] ]);
+  });
+
 });
