@@ -1,7 +1,7 @@
 {
   "name": "jsonpath",
   "description": "Query JavaScript objects with JSONPath expressions. Robust / safe JSONPath engine for Node.js.",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "author": "david@fmail.co.uk",
   "scripts": {
     "test": "mocha -u tdd test && jscs lib && jshint lib",
