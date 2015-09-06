@@ -143,7 +143,7 @@ var nodes = jp.nodes(data, '$..author');
 // ]
 ```
 
-#### jp.value(obj, pathExpression, [newValue])
+#### jp.value(obj, pathExpression[, newValue])
 
 Returns the value of the first element matching `pathExpression`.  If `newValue` is provided, sets the value of the first matching element and returns the new value.
 
