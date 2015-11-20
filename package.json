@@ -4,6 +4,7 @@
   "version": "0.2.0",
   "author": "david@fmail.co.uk",
   "scripts": {
+    "postinstall": "node lib/aesprim.js > generated/aesprim-browser.js",
     "test": "mocha -u tdd test && jscs lib && jshint lib",
     "generate": "node bin/generate_parser.js > generated/parser.js"
   },
@@ -12,6 +13,9 @@
     "jison": "0.4.13",
     "static-eval": "0.2.3",
     "underscore": "1.7.0"
+  },
+  "browser": {
+    "./lib/aesprim.js": "./generated/aesprim-browser.js"
   },
   "devDependencies": {
     "grunt": "0.4.5",
