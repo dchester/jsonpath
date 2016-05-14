@@ -30,6 +30,16 @@ suite('query', function() {
     ]);
   });
 
+  test('all authors via subscript descendant string literal', function() {
+    var results = jp.nodes(data, "$..['author']");
+    assert.deepEqual(results, [
+      { path: ['$', 'store', 'book', 0, 'author'], value: 'Nigel Rees' },
+      { path: ['$', 'store', 'book', 1, 'author'], value: 'Evelyn Waugh' },
+      { path: ['$', 'store', 'book', 2, 'author'], value: 'Herman Melville' },
+      { path: ['$', 'store', 'book', 3, 'author'], value: 'J. R. R. Tolkien' }
+    ]);
+  });
+
   test('all things in store', function() {
     var results = jp.nodes(data, '$.store.*');
     assert.deepEqual(results, [

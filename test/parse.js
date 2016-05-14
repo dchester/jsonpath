@@ -36,6 +36,14 @@ suite('parse', function() {
     ])
   });
 
+  test('parse path for all authors via subscript descendant string literal', function() {
+    var path = jp.parse("$..['author']");
+    assert.deepEqual(path, [
+      { expression: { type: 'root', value: '$' } },
+      { operation: 'subscript', scope: 'descendant', expression: { type: 'string_literal', value: 'author' } }
+    ])
+  });
+
   test('parse path for all things in store', function() {
     var path = jp.parse('$.store.*');
     assert.deepEqual(path, [
