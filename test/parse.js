@@ -146,15 +146,19 @@ suite('parse', function() {
 suite('parse-negative', function() {
 
   test('parse path with leading member component throws', function() {
-    assert.throws(function() { var path = jp.parse('.store') })
+    assert.throws(function(e) { var path = jp.parse('.store') }, /Expecting 'DOLLAR'/)
   });
 
   test('parse path with leading descendant member throws', function() {
-    assert.throws(function() { var path = jp.parse('..store') })
+    assert.throws(function() { var path = jp.parse('..store') }, /Expecting 'DOLLAR'/)
   });
 
   test('leading script throws', function() {
-    assert.throws(function() { var path = jp.parse('()') })
+    assert.throws(function() { var path = jp.parse('()') }, /Unrecognized text/)
+  });
+
+  test('first time friendly error', function() {
+    assert.throws(function() { (new jp.JSONPath).parse('$...') }, /Expecting 'STAR'/)
   });
 
 });
