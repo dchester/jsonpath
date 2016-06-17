@@ -17,7 +17,7 @@ suite('sugar', function() {
     assert.equal(data.z.a, 101);
   });
 
-  test('apply method to recursive object', function() {
+  test('apply method applies survives structural changes', function() {
     var data = {a: {b: [1, {c: [2,3]}]}};
     jp.apply(data, '$..*[?(@.length > 1)]', function(array) {
       return array.reverse();
