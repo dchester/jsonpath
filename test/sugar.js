@@ -17,6 +17,14 @@ suite('sugar', function() {
     assert.equal(data.z.a, 101);
   });
 
+  test('apply method to recursive object', function() {
+    var data = {a: {b: [1, {c: [2,3]}]}};
+    jp.apply(data, '$..*[?(@.length > 1)]', function(array) {
+      return array.reverse();
+    });
+    assert.deepEqual(data.a.b, [{c: [3, 2]}, 1]);
+  });
+
   test('value method gets us a value', function() {
     var data = { a: 1, b: 2, c: 3, z: { a: 100, b: 200 } };
     var b = jp.value(data, '$..b')
