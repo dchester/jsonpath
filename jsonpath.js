@@ -4856,8 +4856,6 @@ function unique(results) {
 module.exports = Handlers;
 
 },{"..":"jsonpath","./aesprim":"./aesprim","./index":5,"./slice":7,"static-eval":13,"underscore":9}],5:[function(require,module,exports){
-/* global toString */
-
 var assert = require('assert');
 var dict = require('./dict');
 var Parser = require('./parser');
@@ -5097,7 +5095,7 @@ JSONPath.prototype._normalize = function(path) {
 }
 
 function _is_string(obj) {
-  return toString.call(obj) == '[object String]';
+  return Object.prototype.toString.call(obj) == '[object String]';
 }
 
 JSONPath.Handlers = Handlers;
