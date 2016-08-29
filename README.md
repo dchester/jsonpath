@@ -212,5 +212,5 @@ As a result of using a real parser and static evaluation, there are some arguabl
 
 ## License
 
-MIT
+[MIT](LICENSE)
 
