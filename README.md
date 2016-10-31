@@ -153,7 +153,7 @@ Returns the parent of the first matching element.
 
 #### jp.apply(obj, pathExpression, fn)
 
-Runs the supplied function `fn` on each matching element, and replaces each matching element with the return value from the function.  The function accepts the value of the matching element as its only parameter.  Returns matching nodes with their updated values.
+Runs the supplied application function `fn` on each matching element, and replaces each matching element with the return value from the function.  The function accepts the value of the matching element as its only parameter.  Returns matching nodes with their updated values.
 
 
 ```javascript
@@ -165,6 +165,8 @@ var nodes = jp.apply(data, '$..author', function(value) { return value.toUpperCa
 //   { path: ['$', 'store', 'book', 3, 'author'], value: 'J. R. R. TOLKIEN' }
 // ]
 ```
+
+If the supplied application function returns the special value `:delete:` the node will be deleted and not updated as is otherwise the default case.
 
 #### jp.parse(pathExpression)
 

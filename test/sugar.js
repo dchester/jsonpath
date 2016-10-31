@@ -17,6 +17,12 @@ suite('sugar', function() {
     assert.equal(data.z.a, 101);
   });
 
+  test('apply method deletes value', function() {
+    var data = { a: 1, b: 2, c: 3, z: { a: 100, b: 200 } };
+    jp.apply(data, '$..a', function(v) { return ':delete:' });
+    assert.ok(Object.keys(data).indexOf('a') < 0);
+  });
+
   test('apply method applies survives structural changes', function() {
     var data = {a: {b: [1, {c: [2,3]}]}};
     jp.apply(data, '$..*[?(@.length > 1)]', function(array) {
