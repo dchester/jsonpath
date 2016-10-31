@@ -23,6 +23,59 @@ suite('sugar', function() {
     assert.ok(Object.keys(data).indexOf('a') < 0);
   });
 
+  test('apply method deletes object from Array specified by remove function', function() {
+    var data = {
+      a: [
+        {
+          id: 'book',
+          price: 100
+        },
+        {
+          id: 'car',
+          price: 3456
+        }
+      ],
+      b: 2
+    };
+
+    jp.apply(data, '$..a[0]', function(v) { 
+      return {
+        remove: (obj) => {
+          return obj.id === v.id;
+        }
+      }
+    });
+
+    assert.equal(data.a[0].id, 'car');
+  });
+
+  test('apply method deletes object from Array specified by special remove object', function() {
+    var data = {
+      a: [
+        {
+          id: 'book',
+          price: 100
+        },
+        {
+          id: 'car',
+          price: 3456
+        }
+      ],
+      b: 2
+    };
+
+    jp.apply(data, '$..a[0]', function(v) { 
+      return {
+        remove: {
+          key: 'id',
+          match: v.id
+        }
+      }
+    });
+
+    assert.equal(data.a[0].id, 'car');
+  });
+
   test('apply method applies survives structural changes', function() {
     var data = {a: {b: [1, {c: [2,3]}]}};
     jp.apply(data, '$..*[?(@.length > 1)]', function(array) {
