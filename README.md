@@ -168,6 +168,49 @@ var nodes = jp.apply(data, '$..author', function(value) { return value.toUpperCa
 
 If the supplied application function returns the special value `:delete:` the node will be deleted and not updated as is otherwise the default case.
 
+When deleting from an Array parent node, you need to pass a special remove object which contains information for the parent node to figure out which child to remove.
+
+```js
+var data = {
+  a: [
+    {
+      id: 'book',
+      price: 100
+    },
+    {
+      id: 'car',
+      price: 3456
+    }
+  ],
+  b: 2
+};
+```
+
+Remove the first element in `a`
+
+```js
+jp.apply(data, '$..a[0]', function(v) { 
+  return {
+    removeItem: (obj) => {
+      return obj.id === v.id;
+    }
+  }
+});
+```
+
+Use special shorthand object to remove by identity key:
+
+```js
+jp.apply(data, '$..a[0]', function(v) { 
+  return {
+    removeItem: {
+      key: 'id',
+      match: v.id
+    }
+  }
+});
+```
+
 #### jp.parse(pathExpression)
 
 Parse the provided JSONPath expression into path components and their associated operations.

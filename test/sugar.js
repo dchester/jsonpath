@@ -40,7 +40,7 @@ suite('sugar', function() {
 
     jp.apply(data, '$..a[0]', function(v) { 
       return {
-        remove: (obj) => {
+        removeItem: (obj) => {
           return obj.id === v.id;
         }
       }
@@ -66,7 +66,7 @@ suite('sugar', function() {
 
     jp.apply(data, '$..a[0]', function(v) { 
       return {
-        remove: {
+        removeItem: {
           key: 'id',
           match: v.id
         }
