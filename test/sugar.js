@@ -17,13 +17,7 @@ suite('sugar', function() {
     assert.equal(data.z.a, 101);
   });
 
-  test('apply method deletes value', function() {
-    var data = { a: 1, b: 2, c: 3, z: { a: 100, b: 200 } };
-    jp.apply(data, '$..a', function(v) { return ':delete:' });
-    assert.ok(Object.keys(data).indexOf('a') < 0);
-  });
-
-  test('apply method deletes object from Array specified by remove function', function() {
+  test('filter method deletes object from Array specified by remove function', function() {
     var data = {
       a: [
         {
@@ -38,18 +32,14 @@ suite('sugar', function() {
       b: 2
     };
 
-    jp.apply(data, '$..a[0]', function(v) { 
-      return {
-        removeItem: (obj) => {
-          return obj.id === v.id;
-        }
-      }
+    jp.filter(data, '$..a[0]', function(v) { 
+      return true;
     });
 
     assert.equal(data.a[0].id, 'car');
   });
 
-  test('apply method deletes object from Array specified by special remove object', function() {
+  test('filter method deletes object from Array specified by special remove object', function() {
     var data = {
       a: [
         {
@@ -61,19 +51,18 @@ suite('sugar', function() {
           price: 3456
         }
       ],
-      b: 2
+      b: {
+        c: 2,
+        d: 1
+      }
     };
 
-    jp.apply(data, '$..a[0]', function(v) { 
-      return {
-        removeItem: {
-          key: 'id',
-          match: v.id
-        }
-      }
+    jp.filter(data, '$..b.c', function(v) { 
+      return true;
     });
 
-    assert.equal(data.a[0].id, 'car');
+    assert.equal(data.b.c, undefined);
+    assert.equal(data.b.d, 1);
   });
 
   test('apply method applies survives structural changes', function() {

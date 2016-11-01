@@ -153,11 +153,11 @@ Returns the parent of the first matching element.
 
 #### jp.apply(obj, pathExpression, fn)
 
-Runs the supplied application function `fn` on each matching element, and replaces each matching element with the return value from the function.  The function accepts the value of the matching element as its only parameter.  Returns matching nodes with their updated values.
+Runs the supplied application function `fn` on each matching element, and replaces each matching element with the return value from the function.  The function accepts the value of the matching element and a context object with the `parent` and `key`.  Returns matching nodes with their updated values.
 
 
 ```javascript
-var nodes = jp.apply(data, '$..author', function(value) { return value.toUpperCase() });
+var nodes = jp.apply(data, '$..author', function(value, ctx) { return value.toUpperCase() });
 // [
 //   { path: ['$', 'store', 'book', 0, 'author'], value: 'NIGEL REES' },
 //   { path: ['$', 'store', 'book', 1, 'author'], value: 'EVELYN WAUGH' },
@@ -166,9 +166,11 @@ var nodes = jp.apply(data, '$..author', function(value) { return value.toUpperCa
 // ]
 ```
 
-If the supplied application function returns the special value `:delete:` the node will be deleted and not updated as is otherwise the default case.
+#### jp.filter(obj, pathExpression, fn)
 
-When deleting from an Array parent node, you need to pass a special remove object which contains information for the parent node to figure out which child to remove.
+Filters the data by removing the matched value if the callback returns a truthy value.
+
+Sample data:
 
 ```js
 var data = {
@@ -182,33 +184,35 @@ var data = {
       price: 3456
     }
   ],
-  b: 2
+  b: {
+    c: 2,
+    d: 1
+  }
 };
 ```
 
-Remove the first element in `a`
+Example: Using `filter` to remove element from an `Array` or `Object` parent node.
 
 ```js
-jp.apply(data, '$..a[0]', function(v) { 
-  return {
-    removeItem: (obj) => {
-      return obj.id === v.id;
-    }
-  }
+// Remove the first element in `a`
+jp.filter(data, '$..a[0]', function(v, ctx) { 
+  return true;
 });
-```
 
-Use special shorthand object to remove by identity key:
-
-```js
-jp.apply(data, '$..a[0]', function(v) { 
-  return {
-    removeItem: {
-      key: 'id',
-      match: v.id
-    }
-  }
+// Remove the element at 'c' from object b
+jp.filter(data, '$..b.c', function(v, ctx) { 
+  return true;
 });
+
+console.log(data)
+// {
+//   a: [
+//     { id: 'car', price: 3456 }
+//   ],
+//   b: {
+//     c: 2
+//   }
+// }
 ```
 
 #### jp.parse(pathExpression)
