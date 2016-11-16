@@ -1,4 +1,4 @@
-/*! jsonpath 0.2.7 */
+/*! jsonpath 0.2.8 */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jsonpath = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"./aesprim":[function(require,module,exports){
 /*
@@ -4669,7 +4669,7 @@ Handlers.prototype._fns = {
 
   'subscript-child-slice': function(component, partial) {
     if (is_array(partial.value)) {
-      var args = component.expression.value.split(':');
+      var args = component.expression.value.split(':').map(_parse_nullable_int);
       var values = partial.value.map(function(v, i) { return { value: v, path: partial.path.concat(i) } });
       return slice.apply(null, [values].concat(args));
     }
@@ -4851,6 +4851,11 @@ function unique(results) {
     results,
     function(r) { return r.path.map(function(c) { return String(c).replace('-', '--') }).join('-') }
   );
+}
+
+function _parse_nullable_int(val) {
+  var sval = String(val);
+  return sval.match(/^-?[0-9]+$/) ? parseInt(sval) : null;
 }
 
 module.exports = Handlers;
@@ -5131,6 +5136,10 @@ module.exports = Parser;
 
 },{"../generated/parser":1,"./grammar":3}],7:[function(require,module,exports){
 module.exports = function(arr, start, end, step) {
+
+  if (typeof start == 'string') throw new Error("start cannot be a string");
+  if (typeof end == 'string') throw new Error("end cannot be a string");
+  if (typeof step == 'string') throw new Error("step cannot be a string");
 
   var len = arr.length;
 
