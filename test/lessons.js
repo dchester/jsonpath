@@ -29,5 +29,10 @@ suite('orig-google-code-issues', function() {
     assert.deepEqual(results, data.DIV);
   });
 
+  test('negative slices', function() {
+    var results = jp.query(data, "$..book[-1:].title");
+    assert.deepEqual(results, ['The Lord of the Rings']);
+  });
+
 });
 
