@@ -17,6 +17,54 @@ suite('sugar', function() {
     assert.equal(data.z.a, 101);
   });
 
+  test('filter method deletes object from Array specified by remove function', function() {
+    var data = {
+      a: [
+        {
+          id: 'book',
+          price: 100
+        },
+        {
+          id: 'car',
+          price: 3456
+        }
+      ],
+      b: 2
+    };
+
+    jp.filter(data, '$..a[0]', function(v) { 
+      return true;
+    });
+
+    assert.equal(data.a[0].id, 'car');
+  });
+
+  test('filter method deletes object from Array specified by special remove object', function() {
+    var data = {
+      a: [
+        {
+          id: 'book',
+          price: 100
+        },
+        {
+          id: 'car',
+          price: 3456
+        }
+      ],
+      b: {
+        c: 2,
+        d: 1
+      }
+    };
+
+    jp.filter(data, '$..b.c', function(v) { 
+      return true;
+    });
+
+    assert.equal(data.b.c, undefined);
+    assert.equal(data.b.d, 1);
+  });
+
   test('apply method applies survives structural changes', function() {
     var data = {a: {b: [1, {c: [2,3]}]}};
     jp.apply(data, '$..*[?(@.length > 1)]', function(array) {
