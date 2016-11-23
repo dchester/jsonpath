@@ -166,6 +166,12 @@ suite('query', function() {
     assert.deepEqual(results, [ { path: [ '$', 'store', 'book', 0 ], value: data.store.book[0] } ]);
   });
 
+  test('member numeric literal matches string-numeric key', function() {
+    var data = { authors: { '1': 'Herman Melville', '2': 'J. R. R. Tolkien' } };
+    var results = jp.nodes(data, '$.authors.1');
+    assert.deepEqual(results, [ { path: [ '$', 'authors', 1 ], value: 'Herman Melville' } ]);
+  });
+
   test('descendant numeric literal gets first element', function() {
     var results = jp.nodes(data, '$.store.book..0');
     assert.deepEqual(results, [ { path: [ '$', 'store', 'book', 0 ], value: data.store.book[0] } ]);
