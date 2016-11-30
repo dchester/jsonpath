@@ -8,6 +8,7 @@
     "test": "mocha -u tdd test && jscs lib && jshint lib",
     "generate": "node bin/generate_parser.js > generated/parser.js"
   },
+  "main": "jsonpath.js",
   "dependencies": {
     "esprima": "1.2.2",
     "jison": "0.4.13",
