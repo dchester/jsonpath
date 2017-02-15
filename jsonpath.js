@@ -4494,9 +4494,6 @@ module.exports = {
 },{}],3:[function(require,module,exports){
 var dict = require('./dict');
 var fs = require('fs');
-fs.readFileSync = fs.readFileSync || function() {}
-require.resolve = require.resolve || function() {}
-
 var grammar = {
 
     lex: {
@@ -4593,11 +4590,12 @@ var grammar = {
         STRING_LITERAL: [
                 [ 'QQ_STRING', "$$ = $1" ],
                 [ 'Q_STRING',  "$$ = $1" ] ]
-    },
-
-    moduleInclude: fs.readFileSync(require.resolve("../include/module.js")),
-    actionInclude: fs.readFileSync(require.resolve("../include/action.js"))
+    }
 };
+if (fs.readFileSync) {
+  grammar.moduleInclude = fs.readFileSync(require.resolve("../include/module.js"));
+  grammar.actionInclude = fs.readFileSync(require.resolve("../include/action.js"));
+}
 
 module.exports = grammar;
 
