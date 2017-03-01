@@ -11,6 +11,7 @@
   "dependencies": {
     "esprima": "1.2.2",
     "jison": "0.4.13",
+    "micromatch": "^2.3.11",
     "static-eval": "0.2.3",
     "underscore": "1.7.0"
   },

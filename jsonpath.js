@@ -4604,6 +4604,7 @@ var aesprim = require('./aesprim');
 var slice = require('./slice');
 var _evaluate = require('static-eval');
 var _uniq = require('underscore').uniq;
+var mm = require('micromatch');
 
 var Handlers = function() {
   return this.initialize.apply(this, arguments);
@@ -4718,7 +4719,7 @@ Handlers.prototype._fns = {
     var ast = aesprim.parse(src).body[0].expression;
 
     var passable = function(key, value) {
-      return evaluate(ast, { '@': value });
+      return evaluate(ast, { '@': value, 'mm': mm });
     }
 
     return this.descend(partial, null, passable, count);
@@ -4732,7 +4733,7 @@ Handlers.prototype._fns = {
     var ast = aesprim.parse(src).body[0].expression;
 
     var passable = function(key, value) {
-      return evaluate(ast, { '@': value });
+      return evaluate(ast, { '@': value, 'mm': mm });
     }
 
     return this.traverse(partial, null, passable, count);
