@@ -91,9 +91,9 @@ JSONPath                      | Description
 `$..author`                     | All authors
 `$.store.*`                    | All things in store, which are some books and a red bicycle
 `$.store..price`                | The price of everything in the store
-`$..book[2]`                    | The third book via array subscript
-`$..book[(@.length-1)]`         | The third book via script subscript
-`$..book[-1:]`                  | The last book in order
+`$..book[2]`                    | The third book
+`$..book[(@.length-1)]`         | The last book via script subscript
+`$..book[-1:]`                  | The last book via slice
 `$..book[0,1]`                  | The first two books via subscript union
 `$..book[:2]`                  | The first two books via subscript array slice
 `$..book[?(@.isbn)]`            | Filter all books with isbn number
