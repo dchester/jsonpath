@@ -9,6 +9,7 @@
     "generate": "node bin/generate_parser.js > generated/parser.js"
   },
   "dependencies": {
+    "assert": "^1.4.1",
     "esprima": "1.2.2",
     "jison": "0.4.13",
     "static-eval": "0.2.3",
