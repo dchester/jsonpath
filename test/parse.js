@@ -141,6 +141,14 @@ suite('parse', function() {
     ])
   });
 
+  test('parse quoted identifier', function() {
+    var path = jp.parse('$."id.entifier"');
+    assert.deepEqual(path, [
+      { expression: { type: 'root', value: '$' } },
+      { operation: 'member', scope: 'child', expression: { type: 'identifier', value: 'id.entifier' } }
+    ])
+  });
+
 });
 
 suite('parse-negative', function() {
