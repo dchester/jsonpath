@@ -1,5 +1,5 @@
 {
-  "name": "jsonpath",
+  "name": "@conscia/jsonpath",
   "description": "Query JavaScript objects with JSONPath expressions. Robust / safe JSONPath engine for Node.js.",
   "version": "0.2.11",
   "author": "david@fmail.co.uk",
