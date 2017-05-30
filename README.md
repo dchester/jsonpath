@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/dchester/jsonpath.png?branch=master)](https://travis-ci.org/dchester/jsonpath)
+[![Build Status](https://semaphoreci.com/api/v1/conscia/jsonpath-conscia/branches/master/badge.svg)](https://semaphoreci.com/conscia/jsonpath-conscia)
 
 # jsonpath
 
