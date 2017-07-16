@@ -351,5 +351,9 @@ suite('query', function() {
     assert.throws(function() { jp.query({}, 42) }, /we need a path/);
   });
 
+  test('union on objects', function() {
+    assert.deepEqual(jp.query({a: 1, b: 2, c: null}, '$..["a","b","c","d"]'), [1, 2, null]);
+  });
+
 });
 
