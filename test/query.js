@@ -355,5 +355,12 @@ suite('query', function() {
     assert.deepEqual(jp.query({a: 1, b: 2, c: null}, '$..["a","b","c","d"]'), [1, 2, null]);
   });
 
+  test('circular reference', function() {
+    var obj = { foo: 'bar' };
+    obj.circularReference = obj;
+    var results = jp.query(obj, '$..*');
+    assert.deepEqual(results, ['bar', obj]);
+  });
+
 });
 
