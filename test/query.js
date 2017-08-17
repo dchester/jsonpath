@@ -363,8 +363,8 @@ suite('query', function() {
 
     var obj = {};
     var o = { foo: 'bar' }
-    obj.foo = o
-    obj.bar = o
+    obj.foo = o;
+    obj.bar = o;
     var results = jp.query(obj, '$..*');
     assert.deepEqual(results, [o, o, 'bar', 'bar']);
   });
