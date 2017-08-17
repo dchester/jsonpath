@@ -360,6 +360,13 @@ suite('query', function() {
     obj.circularReference = obj;
     var results = jp.query(obj, '$..*');
     assert.deepEqual(results, ['bar', obj]);
+
+    var obj = {};
+    var o = { foo: 'bar' }
+    obj.foo = o
+    obj.bar = o
+    var results = jp.query(obj, '$..*');
+    assert.deepEqual(results, [o, o, 'bar', 'bar']);
   });
 
 });
