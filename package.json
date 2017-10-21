@@ -1,7 +1,7 @@
 {
   "name": "jsonpath",
   "description": "Query JavaScript objects with JSONPath expressions. Robust / safe JSONPath engine for Node.js.",
-  "version": "0.2.12",
+  "version": "1.0.0",
   "author": "david@fmail.co.uk",
   "scripts": {
     "postinstall": "node lib/aesprim.js > generated/aesprim-browser.js",
