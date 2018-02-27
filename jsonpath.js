@@ -4639,7 +4639,7 @@ Handlers.prototype._fns = {
   'member-child-identifier': function(component, partial) {
     var key = component.expression.value;
     var value = partial.value;
-    if (value instanceof Object && key in value) {
+    if (value && typeof value === "object" && key in value) {
       return [ { value: value[key], path: partial.path.concat(key) } ]
     }
   },
@@ -4782,7 +4782,7 @@ function is_array(val) {
 
 function is_object(val) {
   // is this a non-array, non-null object?
-  return val && !(val instanceof Array) && val instanceof Object;
+  return val && !(val instanceof Array) && typeof val === "object";
 }
 
 function traverser(recurse) {
