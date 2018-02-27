@@ -4483,7 +4483,7 @@ if (typeof module !== 'undefined' && require.main === module) {
 }
 
 }).call(this,require('_process'))
-},{"_process":12,"fs":8,"path":11}],2:[function(require,module,exports){
+},{"_process":11,"fs":9,"path":10}],2:[function(require,module,exports){
 module.exports = {
   identifier: "[a-zA-Z_]+[a-zA-Z0-9_]*",
   integer: "-?(?:0|[1-9][0-9]*)",
@@ -4599,7 +4599,7 @@ if (fs.readFileSync) {
 
 module.exports = grammar;
 
-},{"./dict":2,"fs":8}],4:[function(require,module,exports){
+},{"./dict":2,"fs":9}],4:[function(require,module,exports){
 var aesprim = require('./aesprim');
 var slice = require('./slice');
 var _evaluate = require('static-eval');
@@ -4861,7 +4861,7 @@ function _parse_nullable_int(val) {
 
 module.exports = Handlers;
 
-},{"..":"jsonpath","./aesprim":"./aesprim","./index":5,"./slice":7,"static-eval":15,"underscore":8}],5:[function(require,module,exports){
+},{"..":"jsonpath","./aesprim":"./aesprim","./index":5,"./slice":7,"static-eval":12,"underscore":9}],5:[function(require,module,exports){
 var assert = require('assert');
 var dict = require('./dict');
 var Parser = require('./parser');
@@ -4883,7 +4883,7 @@ JSONPath.prototype.parse = function(string) {
 
 JSONPath.prototype.parent = function(obj, string) {
 
-  assert.ok(obj instanceof Object, "obj needs to be an object");
+  assert.ok(obj && typeof obj === "object", "obj needs to be an object");
   assert.ok(string, "we need a path");
 
   var node = this.nodes(obj, string)[0];
@@ -4893,7 +4893,7 @@ JSONPath.prototype.parent = function(obj, string) {
 
 JSONPath.prototype.apply = function(obj, string, fn) {
 
-  assert.ok(obj instanceof Object, "obj needs to be an object");
+  assert.ok(obj && typeof obj === "object", "obj needs to be an object");
   assert.ok(string, "we need a path");
   assert.equal(typeof fn, "function", "fn needs to be function")
 
@@ -4914,7 +4914,7 @@ JSONPath.prototype.apply = function(obj, string, fn) {
 
 JSONPath.prototype.value = function(obj, path, value) {
 
-  assert.ok(obj instanceof Object, "obj needs to be an object");
+  assert.ok(obj && typeof obj === "object", "obj needs to be an object");
   assert.ok(path, "we need a path");
 
   if (arguments.length >= 3) {
@@ -4931,7 +4931,7 @@ JSONPath.prototype._vivify = function(obj, string, value) {
 
   var self = this;
 
-  assert.ok(obj instanceof Object, "obj needs to be an object");
+  assert.ok(obj && typeof obj === "object", "obj needs to be an object");
   assert.ok(string, "we need a path");
 
   var path = this.parser.parse(string)
@@ -4952,7 +4952,7 @@ JSONPath.prototype._vivify = function(obj, string, value) {
 
 JSONPath.prototype.query = function(obj, string, count) {
 
-  assert.ok(obj instanceof Object, "obj needs to be an object");
+  assert.ok(obj && typeof obj === "object", "obj needs to be an object");
   assert.ok(_is_string(string), "we need a path");
 
   var results = this.nodes(obj, string, count)
@@ -4963,7 +4963,7 @@ JSONPath.prototype.query = function(obj, string, count) {
 
 JSONPath.prototype.paths = function(obj, string, count) {
 
-  assert.ok(obj instanceof Object, "obj needs to be an object");
+  assert.ok(obj && typeof obj === "object", "obj needs to be an object");
   assert.ok(string, "we need a path");
 
   var results = this.nodes(obj, string, count)
@@ -4974,7 +4974,7 @@ JSONPath.prototype.paths = function(obj, string, count) {
 
 JSONPath.prototype.nodes = function(obj, string, count) {
 
-  assert.ok(obj instanceof Object, "obj needs to be an object");
+  assert.ok(obj && typeof obj === "object", "obj needs to be an object");
   assert.ok(string, "we need a path");
 
   if (count === 0) return [];
@@ -5112,7 +5112,7 @@ instance.JSONPath = JSONPath;
 
 module.exports = instance;
 
-},{"./dict":2,"./handlers":4,"./parser":6,"assert":9}],6:[function(require,module,exports){
+},{"./dict":2,"./handlers":4,"./parser":6,"assert":8}],6:[function(require,module,exports){
 var grammar = require('./grammar');
 var gparser = require('../generated/parser');
 
@@ -5179,8 +5179,6 @@ function integer(val) {
 }
 
 },{}],8:[function(require,module,exports){
-
-},{}],9:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
@@ -5541,32 +5539,9 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-},{"util/":14}],10:[function(require,module,exports){
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-  };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    var TempCtor = function () {}
-    TempCtor.prototype = superCtor.prototype
-    ctor.prototype = new TempCtor()
-    ctor.prototype.constructor = ctor
-  }
-}
+},{"util/":15}],9:[function(require,module,exports){
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -5794,16 +5769,105 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":12}],12:[function(require,module,exports){
+},{"_process":11}],11:[function(require,module,exports){
 // shim for using process in browser
-
 var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
 var queue = [];
 var draining = false;
 var currentQueue;
 var queueIndex = -1;
 
 function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
     draining = false;
     if (currentQueue.length) {
         queue = currentQueue.concat(queue);
@@ -5819,7 +5883,7 @@ function drainQueue() {
     if (draining) {
         return;
     }
-    var timeout = setTimeout(cleanUpNextTick);
+    var timeout = runTimeout(cleanUpNextTick);
     draining = true;
 
     var len = queue.length;
@@ -5836,7 +5900,7 @@ function drainQueue() {
     }
     currentQueue = null;
     draining = false;
-    clearTimeout(timeout);
+    runClearTimeout(timeout);
 }
 
 process.nextTick = function (fun) {
@@ -5848,7 +5912,7 @@ process.nextTick = function (fun) {
     }
     queue.push(new Item(fun, args));
     if (queue.length === 1 && !draining) {
-        setTimeout(drainQueue, 0);
+        runTimeout(drainQueue);
     }
 };
 
@@ -5876,6 +5940,10 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
@@ -5887,14 +5955,217 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
+var unparse = require('escodegen').generate;
+
+module.exports = function (ast, vars) {
+    if (!vars) vars = {};
+    var FAIL = {};
+    
+    var result = (function walk (node, scopeVars) {
+        if (node.type === 'Literal') {
+            return node.value;
+        }
+        else if (node.type === 'UnaryExpression'){
+            var val = walk(node.argument)
+            if (node.operator === '+') return +val
+            if (node.operator === '-') return -val
+            if (node.operator === '~') return ~val
+            if (node.operator === '!') return !val
+            return FAIL
+        }
+        else if (node.type === 'ArrayExpression') {
+            var xs = [];
+            for (var i = 0, l = node.elements.length; i < l; i++) {
+                var x = walk(node.elements[i]);
+                if (x === FAIL) return FAIL;
+                xs.push(x);
+            }
+            return xs;
+        }
+        else if (node.type === 'ObjectExpression') {
+            var obj = {};
+            for (var i = 0; i < node.properties.length; i++) {
+                var prop = node.properties[i];
+                var value = prop.value === null
+                    ? prop.value
+                    : walk(prop.value)
+                ;
+                if (value === FAIL) return FAIL;
+                obj[prop.key.value || prop.key.name] = value;
+            }
+            return obj;
+        }
+        else if (node.type === 'BinaryExpression' ||
+                 node.type === 'LogicalExpression') {
+            var l = walk(node.left);
+            if (l === FAIL) return FAIL;
+            var r = walk(node.right);
+            if (r === FAIL) return FAIL;
+            
+            var op = node.operator;
+            if (op === '==') return l == r;
+            if (op === '===') return l === r;
+            if (op === '!=') return l != r;
+            if (op === '!==') return l !== r;
+            if (op === '+') return l + r;
+            if (op === '-') return l - r;
+            if (op === '*') return l * r;
+            if (op === '/') return l / r;
+            if (op === '%') return l % r;
+            if (op === '<') return l < r;
+            if (op === '<=') return l <= r;
+            if (op === '>') return l > r;
+            if (op === '>=') return l >= r;
+            if (op === '|') return l | r;
+            if (op === '&') return l & r;
+            if (op === '^') return l ^ r;
+            if (op === '&&') return l && r;
+            if (op === '||') return l || r;
+            
+            return FAIL;
+        }
+        else if (node.type === 'Identifier') {
+            if ({}.hasOwnProperty.call(vars, node.name)) {
+                return vars[node.name];
+            }
+            else return FAIL;
+        }
+        else if (node.type === 'ThisExpression') {
+            if ({}.hasOwnProperty.call(vars, 'this')) {
+                return vars['this'];
+            }
+            else return FAIL;
+        }
+        else if (node.type === 'CallExpression') {
+            var callee = walk(node.callee);
+            if (callee === FAIL) return FAIL;
+            if (typeof callee !== 'function') return FAIL;
+            
+            var ctx = node.callee.object ? walk(node.callee.object) : FAIL;
+            if (ctx === FAIL) ctx = null;
+
+            var args = [];
+            for (var i = 0, l = node.arguments.length; i < l; i++) {
+                var x = walk(node.arguments[i]);
+                if (x === FAIL) return FAIL;
+                args.push(x);
+            }
+            return callee.apply(ctx, args);
+        }
+        else if (node.type === 'MemberExpression') {
+            var obj = walk(node.object);
+            // do not allow access to methods on Function 
+            if((obj === FAIL) || (typeof obj == 'function')){
+                return FAIL;
+            }
+            if (node.property.type === 'Identifier') {
+                return obj[node.property.name];
+            }
+            var prop = walk(node.property);
+            if (prop === FAIL) return FAIL;
+            return obj[prop];
+        }
+        else if (node.type === 'ConditionalExpression') {
+            var val = walk(node.test)
+            if (val === FAIL) return FAIL;
+            return val ? walk(node.consequent) : walk(node.alternate)
+        }
+        else if (node.type === 'ExpressionStatement') {
+            var val = walk(node.expression)
+            if (val === FAIL) return FAIL;
+            return val;
+        }
+        else if (node.type === 'ReturnStatement') {
+            return walk(node.argument)
+        }
+        else if (node.type === 'FunctionExpression') {
+            
+            var bodies = node.body.body;
+            
+            // Create a "scope" for our arguments
+            var oldVars = {};
+            Object.keys(vars).forEach(function(element){
+                oldVars[element] = vars[element];
+            })
+
+            node.params.forEach(function(key) {
+                if(key.type == 'Identifier'){
+                  vars[key.name] = null;
+                }
+            });
+            for(var i in bodies){
+                if(walk(bodies[i]) === FAIL){
+                    return FAIL;
+                }
+            }
+            // restore the vars and scope after we walk
+            vars = oldVars;
+            
+            var keys = Object.keys(vars);
+            var vals = keys.map(function(key) {
+                return vars[key];
+            });
+            return Function(keys.join(', '), 'return ' + unparse(node)).apply(null, vals);
+        }
+        else if (node.type === 'TemplateLiteral') {
+            var str = '';
+            for (var i = 0; i < node.expressions.length; i++) {
+                str += walk(node.quasis[i]);
+                str += walk(node.expressions[i]);
+            }
+            str += walk(node.quasis[i]);
+            return str;
+        }
+        else if (node.type === 'TaggedTemplateExpression') {
+            var tag = walk(node.tag);
+            var quasi = node.quasi;
+            var strings = quasi.quasis.map(walk);
+            var values = quasi.expressions.map(walk);
+            return tag.apply(null, [strings].concat(values));
+        }
+        else if (node.type === 'TemplateElement') {
+            return node.value.cooked;
+        }
+        else return FAIL;
+    })(ast);
+    
+    return result === FAIL ? undefined : result;
+};
+
+},{"escodegen":9}],13:[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
+},{}],14:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -6484,122 +6755,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":13,"_process":12,"inherits":10}],15:[function(require,module,exports){
-var unparse = require('escodegen').generate;
-
-module.exports = function (ast, vars) {
-    if (!vars) vars = {};
-    var FAIL = {};
-    
-    var result = (function walk (node) {
-        if (node.type === 'Literal') {
-            return node.value;
-        }
-        else if (node.type === 'UnaryExpression'){
-            var val = walk(node.argument)
-            if (node.operator === '+') return +val
-            if (node.operator === '-') return -val
-            if (node.operator === '~') return ~val
-            if (node.operator === '!') return !val
-            return FAIL
-        }
-        else if (node.type === 'ArrayExpression') {
-            var xs = [];
-            for (var i = 0, l = node.elements.length; i < l; i++) {
-                var x = walk(node.elements[i]);
-                if (x === FAIL) return FAIL;
-                xs.push(x);
-            }
-            return xs;
-        }
-        else if (node.type === 'ObjectExpression') {
-            var obj = {};
-            for (var i = 0; i < node.properties.length; i++) {
-                var prop = node.properties[i];
-                var value = prop.value === null
-                    ? prop.value
-                    : walk(prop.value)
-                ;
-                if (value === FAIL) return FAIL;
-                obj[prop.key.value || prop.key.name] = value;
-            }
-            return obj;
-        }
-        else if (node.type === 'BinaryExpression' ||
-                 node.type === 'LogicalExpression') {
-            var l = walk(node.left);
-            if (l === FAIL) return FAIL;
-            var r = walk(node.right);
-            if (r === FAIL) return FAIL;
-            
-            var op = node.operator;
-            if (op === '==') return l == r;
-            if (op === '===') return l === r;
-            if (op === '!=') return l != r;
-            if (op === '!==') return l !== r;
-            if (op === '+') return l + r;
-            if (op === '-') return l - r;
-            if (op === '*') return l * r;
-            if (op === '/') return l / r;
-            if (op === '%') return l % r;
-            if (op === '<') return l < r;
-            if (op === '<=') return l <= r;
-            if (op === '>') return l > r;
-            if (op === '>=') return l >= r;
-            if (op === '|') return l | r;
-            if (op === '&') return l & r;
-            if (op === '^') return l ^ r;
-            if (op === '&&') return l && r;
-            if (op === '||') return l || r;
-            
-            return FAIL;
-        }
-        else if (node.type === 'Identifier') {
-            if ({}.hasOwnProperty.call(vars, node.name)) {
-                return vars[node.name];
-            }
-            else return FAIL;
-        }
-        else if (node.type === 'CallExpression') {
-            var callee = walk(node.callee);
-            if (callee === FAIL) return FAIL;
-            
-            var ctx = node.callee.object ? walk(node.callee.object) : FAIL;
-            if (ctx === FAIL) ctx = null;
-
-            var args = [];
-            for (var i = 0, l = node.arguments.length; i < l; i++) {
-                var x = walk(node.arguments[i]);
-                if (x === FAIL) return FAIL;
-                args.push(x);
-            }
-            return callee.apply(ctx, args);
-        }
-        else if (node.type === 'MemberExpression') {
-            var obj = walk(node.object);
-            if (obj === FAIL) return FAIL;
-            if (node.property.type === 'Identifier') {
-                return obj[node.property.name];
-            }
-            var prop = walk(node.property);
-            if (prop === FAIL) return FAIL;
-            return obj[prop];
-        }
-        else if (node.type === 'ConditionalExpression') {
-            var val = walk(node.test)
-            if (val === FAIL) return FAIL;
-            return val ? walk(node.consequent) : walk(node.alternate)
-        }
-        else if (node.type === 'FunctionExpression') {
-            return Function('return ' + unparse(node))();
-        }
-        else return FAIL;
-    })(ast);
-    
-    return result === FAIL ? undefined : result;
-};
-
-},{"escodegen":8}],"jsonpath":[function(require,module,exports){
+},{"./support/isBuffer":14,"_process":11,"inherits":13}],"jsonpath":[function(require,module,exports){
 module.exports = require('./lib/index');
 
 },{"./lib/index":5}]},{},["jsonpath"])("jsonpath")
