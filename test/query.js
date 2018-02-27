@@ -342,6 +342,16 @@ suite('query', function() {
   test('throws for bad input', function() {
     assert.throws(function() { jp.query("string", "string") }, /needs to be an object/);
   });
+  
+  test('throws on null input', function() {
+     assert.throws(function() { jp.query(null, "string") }, /needs to be an object/); 
+  });
+  
+  test('accepts empty objects', function() {
+      var data = Object.create(null);
+      var results = jp.query(data, '$..*');
+      assert.deepEqual(results, [ ]);
+  });
 
   test('throws for bad input', function() {
     assert.throws(function() { jp.query({}, null) }, /we need a path/);
