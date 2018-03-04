@@ -1,4 +1,4 @@
-var dict = require('./dict');
+var dict = require('../lib/dict');
 var fs = require('fs');
 var grammar = {
 
@@ -98,9 +98,8 @@ var grammar = {
                 [ 'Q_STRING',  "$$ = $1" ] ]
     }
 };
-if (fs.readFileSync) {
-  grammar.moduleInclude = fs.readFileSync(require.resolve("../include/module.js"));
-  grammar.actionInclude = fs.readFileSync(require.resolve("../include/action.js"));
-}
+
+grammar.moduleInclude = fs.readFileSync(require.resolve("./module.js"));
+grammar.actionInclude = fs.readFileSync(require.resolve("./action.js"));
 
 module.exports = grammar;
