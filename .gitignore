@@ -1,2 +1,4 @@
 node_modules
 generated/aesprim-browser.js
+package-lock.json
+.idea/
