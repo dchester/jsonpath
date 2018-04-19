@@ -30,11 +30,11 @@ suite('stringify', function() {
 
   test('keys with hyphens get subscripted', function() {
     var string = jp.stringify(['$', 'member-search']);
-    assert.equal(string, '$["member-search"]');
+    assert.equal(string, "$['member-search']");
   });
 
   test('complicated path round trips', function() {
-    var pathExpression = '$..*[0:2].member["string-xyz"]';
+    var pathExpression = "$..*[0:2].member['string-xyz']";
     var path = jp.parse(pathExpression);
     var string = jp.stringify(path);
     assert.equal(string, pathExpression);
