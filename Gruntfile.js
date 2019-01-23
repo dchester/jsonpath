@@ -30,7 +30,6 @@ module.exports = function (grunt) {
                         'source-map',
                         'estraverse',
                         'escodegen',
-                        'underscore',
                         'reflect',
                         'JSONSelect',
                         './lib/aesprim.js'
