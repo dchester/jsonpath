@@ -15,7 +15,10 @@
     "underscore": "1.7.0"
   },
   "browser": {
-    "./lib/aesprim.js": "./generated/aesprim-browser.js"
+    "./lib/aesprim.js": "./generated/aesprim-browser.js",
+    "fs": false,
+    "os": false,
+    "path": false
   },
   "devDependencies": {
     "grunt": "0.4.5",
