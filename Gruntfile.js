@@ -1,3 +1,7 @@
+var Browserify = require('browserify');
+var bresolve = require('browser-resolve');
+patchResolve();
+
 module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -65,3 +69,15 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['browserify', 'uglify']);
 
 };
+
+function patchResolve() {
+  var _createDeps = Browserify.prototype._createDeps;
+  Browserify.prototype._createDeps = function() {
+    var returnValue = _createDeps.apply(this, arguments);
+    this._bresolve = function(id, opts, cb) {
+      opts.browser = 'alias';
+      return bresolve(id, opts, cb);
+    };
+    return returnValue;
+  }
+}
