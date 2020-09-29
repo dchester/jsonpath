@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "esprima": "1.2.5",
-    "static-eval": "2.1.1",
-    "underscore": "1.13.6"
+    "lodash": "^4.18.1",
+    "static-eval": "2.1.1"
   },
   "browser": "./jsonpath.js",
   "alias": {
