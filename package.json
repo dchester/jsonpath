@@ -4,7 +4,7 @@
   "version": "1.0.2",
   "author": "david@fmail.co.uk",
   "scripts": {
-    "postinstall": "node lib/aesprim.js > generated/aesprim-browser.js",
+    "prepublishOnly": "node lib/aesprim.js > generated/aesprim-browser.js",
     "test": "mocha -u tdd test && jscs lib && jshint lib",
     "generate": "node bin/generate_parser.js > generated/parser.js"
   },
