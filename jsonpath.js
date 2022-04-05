@@ -4603,7 +4603,6 @@ module.exports = grammar;
 var aesprim = require('./aesprim');
 var slice = require('./slice');
 var _evaluate = require('static-eval');
-var _uniq = require('underscore').uniq;
 
 var Handlers = function() {
   return this.initialize.apply(this, arguments);
@@ -4846,9 +4845,25 @@ function evaluate() {
   catch (e) { }
 }
 
+function uniqWith(array, iteratee) {
+  var result = [];
+  var seen = [];
+
+  array.forEach(function (value) {
+    var computed = iteratee(value);
+
+    if (!seen.includes(seen, computed)) {
+      seen.push(computed);
+      result.push(value);
+    }
+  });
+
+  return result;
+}
+
 function unique(results) {
   results = results.filter(function(d) { return d })
-  return _uniq(
+  return uniqWith(
     results,
     function(r) { return r.path.map(function(c) { return String(c).replace('-', '--') }).join('-') }
   );
@@ -4861,7 +4876,7 @@ function _parse_nullable_int(val) {
 
 module.exports = Handlers;
 
-},{"..":"jsonpath","./aesprim":"./aesprim","./index":5,"./slice":7,"static-eval":15,"underscore":12}],5:[function(require,module,exports){
+},{"..":"jsonpath","./aesprim":"./aesprim","./index":5,"./slice":7,"static-eval":15}],5:[function(require,module,exports){
 var assert = require('assert');
 var dict = require('./dict');
 var Parser = require('./parser');
