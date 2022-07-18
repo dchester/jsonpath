@@ -2,7 +2,7 @@
 
 # jsonpath-pro
 
-Query JavaScript objects with JSONPath expressions.  Robust / safe JSONPath engine for Node.js.
+Query JavaScript objects with JSONPath expressions.  Robust / safe JSONPath engine for Node.js. Support Chinese keys.
 
 
 ## Query Example
