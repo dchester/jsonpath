@@ -1,19 +1,26 @@
 {
-  "name": "jsonpath",
-  "description": "Query JavaScript objects with JSONPath expressions. Robust / safe JSONPath engine for Node.js.",
-  "version": "1.1.1",
+  "name": "jsonpath-pro",
+  "description": "Query JavaScript objects with JSONPath expressions. Robust / safe JSONPath engine for Node.js. Support Chinese keys.",
+  "version": "1.0.0",
   "author": "david@fmail.co.uk",
+  "contributors": [
+    {
+      "name": "zenzhong",
+      "email": "qingzz@qingzz.cn"
+    }
+  ],
   "scripts": {
     "prepublishOnly": "node lib/aesprim.js > generated/aesprim-browser.js",
     "test": "mocha -u tdd test && jscs lib && jshint lib",
-    "generate": "node bin/generate_parser.js > generated/parser.js"
+    "generate": "node bin/generate_parser.js > generated/parser.js",
+    "build": "generate && grunt"
   },
   "dependencies": {
     "esprima": "1.2.2",
     "static-eval": "2.0.2",
     "underscore": "1.12.1"
   },
-  "browser": "./jsonpath.js",
+  "browser": "./jsonpath-pro.js",
   "alias": {
     "./lib/aesprim.js": "./generated/aesprim-browser.js"
   },
@@ -29,7 +36,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dchester/jsonpath"
+    "url": "https://github.com/zenzhong/jsonpath"
   },
   "keywords": [
     "JSONPath",
