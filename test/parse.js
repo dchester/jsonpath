@@ -17,6 +17,34 @@ suite('parse', function() {
     ])
   });
 
+  test('parse path for chinese', function() {
+    var path = jp.parse('$.store.书籍');
+    assert.deepEqual(path, [
+      {
+        expression: {
+          type: 'root',
+          value: '$'
+        }
+      },
+      {
+        expression: {
+          type: 'identifier',
+          value: 'store'
+        },
+        operation: 'member',
+        scope: 'child'
+      },
+      {
+        expression: {
+          type: 'identifier',
+          value: '书籍'
+        },
+        operation: 'member',
+        scope: 'child'
+      }
+    ])
+  });
+
   test('parse path for the authors of all books in the store', function() {
     var path = jp.parse('$.store.book[*].author');
     assert.deepEqual(path, [
