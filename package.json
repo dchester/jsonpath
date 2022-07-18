@@ -1,7 +1,7 @@
 {
   "name": "jsonpath-pro",
   "description": "Query JavaScript objects with JSONPath expressions. Robust / safe JSONPath engine for Node.js. Support Chinese keys.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "david@fmail.co.uk",
   "contributors": [
     {
@@ -13,7 +13,7 @@
     "prepublishOnly": "node lib/aesprim.js > generated/aesprim-browser.js",
     "test": "mocha -u tdd test && jscs lib && jshint lib",
     "generate": "node bin/generate_parser.js > generated/parser.js",
-    "build": "generate && grunt"
+    "build": "npm run generate && grunt"
   },
   "dependencies": {
     "esprima": "1.2.2",

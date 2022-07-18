@@ -1,4 +1,4 @@
-// Type definitions for jsonpath-pro 1.0.1
+// Type definitions for jsonpath-pro
 // Project: https://www.npmjs.org/package/jsonpath-pro
 // Definitions by: Hiroki Horiuchi <https://github.com/horiuchi>, Ika <https://github.com/ikatyang>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
