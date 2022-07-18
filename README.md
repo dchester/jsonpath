@@ -1,8 +1,6 @@
-[![Build Status](https://travis-ci.org/dchester/jsonpath.png?branch=master)](https://travis-ci.org/dchester/jsonpath)
-
 # jsonpath-pro
 
-Query JavaScript objects with JSONPath expressions.  Robust / safe JSONPath engine for Node.js. Support Chinese keys.
+Query JavaScript objects with JSONPath expressions.  Robust / safe JSONPath engine for Node.js. Support Chinese keys and typescript.
 
 
 ## Query Example
@@ -43,14 +41,14 @@ JSONPath         | Description
 `[,]`	         | Union operator for alternate names or array indices as a set
 `[start:end:step]` | Array slice operator borrowed from ES4 / Python
 `?()`              | Applies a filter (script) expression via static evaluation
-`()`	         | Script expression via static evaluation 
+`()`	         | Script expression via static evaluation
 
 Given this sample data set, see example expressions below:
 
 ```javascript
 {
   "store": {
-    "book": [ 
+    "book": [
       {
         "category": "reference",
         "author": "Nigel Rees",
@@ -197,7 +195,7 @@ Script expressions (i.e, `(...)` and `?(...)`) are statically evaluated via [sta
 
 #### Grammar
 
-This project uses a formal BNF [grammar](https://github.com/dchester/jsonpath/blob/master/lib/grammar.js) to parse JSONPath expressions, an attempt at reverse-engineering the intent of the original implementation, which parses via a series of creative regular expressions.  The original regex approach can sometimes be forgiving for better or for worse (e.g., `$['store]` => `$['store']`), and in other cases, can be just plain wrong (e.g. `[` => `$`). 
+This project uses a formal BNF [grammar](https://github.com/zenzhong/jsonpath/blob/master/lib/grammar.js) to parse JSONPath expressions, an attempt at reverse-engineering the intent of the original implementation, which parses via a series of creative regular expressions.  The original regex approach can sometimes be forgiving for better or for worse (e.g., `$['store]` => `$['store']`), and in other cases, can be just plain wrong (e.g. `[` => `$`).
 
 #### Other Minor Differences
 
@@ -213,4 +211,3 @@ As a result of using a real parser and static evaluation, there are some arguabl
 ## License
 
 [MIT](LICENSE)
-
