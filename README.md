@@ -25,7 +25,7 @@ var names = jp.query(cities, '$..name');
 
 Install from npm:
 ```bash
-$ npm install jsonpath
+$ npm install jsonpath-pro
 ```
 
 ## JSONPath Syntax
