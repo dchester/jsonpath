@@ -1,7 +1,7 @@
 {
   "name": "jsonpath-pro",
   "description": "Query JavaScript objects with JSONPath expressions. Robust / safe JSONPath engine for Node.js. Support Chinese keys.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "david@fmail.co.uk",
   "contributors": [
     {
@@ -20,6 +20,8 @@
     "static-eval": "2.0.2",
     "underscore": "1.12.1"
   },
+  "main": "./index.js",
+  "typings": "./index.d.ts",
   "browser": "./jsonpath-pro.js",
   "alias": {
     "./lib/aesprim.js": "./generated/aesprim-browser.js"
