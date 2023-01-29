@@ -1,7 +1,8 @@
+
 {
   "name": "jsonpath",
   "description": "Query JavaScript objects with JSONPath expressions. Robust / safe JSONPath engine for Node.js.",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "author": "david@fmail.co.uk",
   "scripts": {
     "prepublishOnly": "node lib/aesprim.js > generated/aesprim-browser.js",
@@ -11,7 +12,7 @@
   "dependencies": {
     "esprima": "1.2.2",
     "static-eval": "2.0.2",
-    "underscore": "1.12.1"
+    "underscore": "^1.13.6"
   },
   "browser": "./jsonpath.js",
   "alias": {
