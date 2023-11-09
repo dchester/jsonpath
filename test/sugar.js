@@ -1,6 +1,7 @@
 var assert = require('assert');
 var jp = require('../');
 var util = require('util');
+var storeData = require('./data/store.json');
 
 suite('sugar', function() {
 
@@ -23,6 +24,18 @@ suite('sugar', function() {
       return array.reverse();
     });
     assert.deepEqual(data.a.b, [{c: [3, 2]}, 1]);
+  });
+
+  test('apply method reports matched nodes', function() {
+    var results = jp.apply(storeData, '$..author', function(value) {
+      return value.toUpperCase();
+    });
+    assert.deepEqual(results, [
+      { path: ['$', 'store', 'book', 0, 'author'], value: 'NIGEL REES' },
+      { path: ['$', 'store', 'book', 1, 'author'], value: 'EVELYN WAUGH' },
+      { path: ['$', 'store', 'book', 2, 'author'], value: 'HERMAN MELVILLE' },
+      { path: ['$', 'store', 'book', 3, 'author'], value: 'J. R. R. TOLKIEN' }
+    ]);
   });
 
   test('value method gets us a value', function() {
