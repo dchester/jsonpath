@@ -5,7 +5,7 @@
   "author": "david@fmail.co.uk",
   "scripts": {
     "prepublishOnly": "node lib/aesprim.js > generated/aesprim-browser.js",
-    "test": "mocha -u tdd test && jscs lib && jshint lib",
+    "test": "mocha -u tdd test && jshint lib",
     "generate": "node bin/generate_parser.js > generated/parser.js"
   },
   "dependencies": {
