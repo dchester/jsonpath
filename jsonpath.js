@@ -1,4 +1,4 @@
-/*! jsonpath 1.1.1 */
+/*! jsonpath 1.2.0 */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jsonpath = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"./aesprim":[function(require,module,exports){
 /*
@@ -839,6 +839,24 @@ parseStatement: true, parseSourceElement: true */
         };
     }
 
+    function isImplicitOctalLiteral() {
+        var i, ch;
+
+        // Implicit octal, unless there is a non-octal digit.
+        // (Annex B.1.1 on Numeric Literals)
+        for (i = index + 1; i < length; ++i) {
+            ch = source[i];
+            if (ch === '8' || ch === '9') {
+                return false;
+            }
+            if (!isOctalDigit(ch)) {
+                return true;
+            }
+        }
+
+        return true;
+    }
+
     function scanNumericLiteral() {
         var number, start, ch;
 
@@ -860,12 +878,9 @@ parseStatement: true, parseSourceElement: true */
                     return scanHexLiteral(start);
                 }
                 if (isOctalDigit(ch)) {
-                    return scanOctalLiteral(start);
-                }
-
-                // decimal number starts with '0' such as '09' is illegal.
-                if (ch && isDecimalDigit(ch.charCodeAt(0))) {
-                    throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
+                    if (isImplicitOctalLiteral()) {
+                        return scanOctalLiteral(start);
+                    }
                 }
             }
 
@@ -1263,7 +1278,7 @@ parseStatement: true, parseSourceElement: true */
             }
             return collectRegex();
         }
-        if (prevToken.type === 'Keyword') {
+        if (prevToken.type === 'Keyword' && prevToken.value !== 'this') {
             return collectRegex();
         }
         return scanPunctuator();
@@ -1948,7 +1963,8 @@ parseStatement: true, parseSourceElement: true */
     }
 
     function consumeSemicolon() {
-        var line;
+        var line, oldIndex = index, oldLineNumber = lineNumber,
+            oldLineStart = lineStart, oldLookahead = lookahead;
 
         // Catch the very common case first: immediately a semicolon (U+003B).
         if (source.charCodeAt(index) === 0x3B || match(';')) {
@@ -1959,6 +1975,10 @@ parseStatement: true, parseSourceElement: true */
         line = lineNumber;
         skipComment();
         if (lineNumber !== line) {
+            index = oldIndex;
+            lineNumber = oldLineNumber;
+            lineStart = oldLineStart;
+            lookahead = oldLookahead;
             return;
         }
 
@@ -2269,14 +2289,11 @@ parseStatement: true, parseSourceElement: true */
     }
 
     function parseLeftHandSideExpressionAllowCall() {
-        var previousAllowIn, expr, args, property, startToken;
+        var expr, args, property, startToken, previousAllowIn = state.allowIn;
 
         startToken = lookahead;
-
-        previousAllowIn = state.allowIn;
         state.allowIn = true;
         expr = matchKeyword('new') ? parseNewExpression() : parsePrimaryExpression();
-        state.allowIn = previousAllowIn;
 
         for (;;) {
             if (match('.')) {
@@ -2293,18 +2310,18 @@ parseStatement: true, parseSourceElement: true */
             }
             delegate.markEnd(expr, startToken);
         }
+        state.allowIn = previousAllowIn;
 
         return expr;
     }
 
     function parseLeftHandSideExpression() {
-        var previousAllowIn, expr, property, startToken;
+        var expr, property, startToken;
+        assert(state.allowIn, 'callee of new expression always allow in keyword.');
 
         startToken = lookahead;
 
-        previousAllowIn = state.allowIn;
         expr = matchKeyword('new') ? parseNewExpression() : parsePrimaryExpression();
-        state.allowIn = previousAllowIn;
 
         while (match('.') || match('[')) {
             if (match('[')) {
@@ -2316,7 +2333,6 @@ parseStatement: true, parseSourceElement: true */
             }
             delegate.markEnd(expr, startToken);
         }
-
         return expr;
     }
 
@@ -2819,7 +2835,7 @@ parseStatement: true, parseSourceElement: true */
     }
 
     function parseForStatement() {
-        var init, test, update, left, right, body, oldInIteration;
+        var init, test, update, left, right, body, oldInIteration, previousAllowIn = state.allowIn;
 
         init = test = update = null;
 
@@ -2833,7 +2849,7 @@ parseStatement: true, parseSourceElement: true */
             if (matchKeyword('var') || matchKeyword('let')) {
                 state.allowIn = false;
                 init = parseForVariableDeclaration();
-                state.allowIn = true;
+                state.allowIn = previousAllowIn;
 
                 if (init.declarations.length === 1 && matchKeyword('in')) {
                     lex();
@@ -2844,7 +2860,7 @@ parseStatement: true, parseSourceElement: true */
             } else {
                 state.allowIn = false;
                 init = parseExpression();
-                state.allowIn = true;
+                state.allowIn = previousAllowIn;
 
                 if (matchKeyword('in')) {
                     // LeftHandSideExpression
@@ -3727,7 +3743,7 @@ parseStatement: true, parseSourceElement: true */
     }
 
     // Sync with *.json manifests.
-    exports.version = '1.2.2';
+    exports.version = '1.2.5';
 
     exports.tokenize = tokenize;
 
@@ -4887,6 +4903,7 @@ JSONPath.prototype.parent = function(obj, string) {
   assert.ok(string, "we need a path");
 
   var node = this.nodes(obj, string)[0];
+  if (node) this._assert_safe_path_keys(node.path);
   var key = node.path.pop(); /* jshint unused:false */
   return this.value(obj, node.path);
 }
@@ -4903,6 +4920,7 @@ JSONPath.prototype.apply = function(obj, string, fn) {
   });
 
   nodes.forEach(function(node) {
+    this._assert_safe_path_keys(node.path);
     var key = node.path.pop();
     var parent = this.value(obj, this.stringify(node.path));
     var val = node.value = fn.call(obj, parent[key]);
@@ -4920,6 +4938,7 @@ JSONPath.prototype.value = function(obj, path, value) {
   if (arguments.length >= 3) {
     var node = this.nodes(obj, path).shift();
     if (!node) return this._vivify(obj, path, value);
+    this._assert_safe_path_keys(node.path);
     var key = node.path.slice(-1).shift();
     var parent = this.parent(obj, this.stringify(node.path));
     parent[key] = value;
@@ -4937,6 +4956,8 @@ JSONPath.prototype._vivify = function(obj, string, value) {
   var path = this.parser.parse(string)
     .map(function(component) { return component.expression.value });
 
+  this._assert_safe_path_keys(path);
+
   var setValue = function(path, value) {
     var key = path.pop();
     var node = self.value(obj, path);
@@ -4944,6 +4965,7 @@ JSONPath.prototype._vivify = function(obj, string, value) {
       setValue(path.concat(), typeof key === 'string' ? {} : []);
       node = self.value(obj, path);
     }
+    self._assert_safe_key(key);
     node[key] = value;
   }
   setValue(path, value);
@@ -4980,6 +5002,7 @@ JSONPath.prototype.nodes = function(obj, string, count) {
   if (count === 0) return [];
 
   var path = this.parser.parse(string);
+  this._assert_safe_components(path);
   var handlers = this.handlers;
 
   var partials = [ { path: ['$'], value: obj } ];
@@ -5070,6 +5093,7 @@ JSONPath.prototype._normalize = function(path) {
       if (component == '$' && index === 0) return;
 
       if (typeof component == "string" && component.match("^" + dict.identifier + "$")) {
+        this._assert_safe_key(component);
 
         _path.push({
           operation: 'member',
@@ -5082,13 +5106,15 @@ JSONPath.prototype._normalize = function(path) {
         var type = typeof component == "number" ?
           'numeric_literal' : 'string_literal';
 
+        if (type === 'string_literal') this._assert_safe_key(component);
+
         _path.push({
           operation: 'subscript',
           scope: 'child',
           expression: { value: component, type: type }
         });
       }
-    });
+    }, this);
 
     return _path;
 
@@ -5100,8 +5126,53 @@ JSONPath.prototype._normalize = function(path) {
   throw new Error("couldn't understand path " + path);
 }
 
+JSONPath.prototype._assert_safe_key = function(key) {
+  if (_is_unsafe_key(key)) {
+    throw new Error("Unsafe key in JSONPath: " + key);
+  }
+}
+
+JSONPath.prototype._assert_safe_path_keys = function(path) {
+  if (!Array.isArray(path)) return;
+  path.forEach(function(key) {
+    if (key === '$') return;
+    if (typeof key === 'string') this._assert_safe_key(key);
+  }, this);
+}
+
+JSONPath.prototype._assert_safe_components = function(components) {
+  var self = this;
+  if (!Array.isArray(components)) return;
+
+  var checkExpression = function(expression) {
+    if (!expression) return;
+    if (expression.type === 'identifier' || expression.type === 'string_literal') {
+      self._assert_safe_key(expression.value);
+      return;
+    }
+
+    if (expression.type === 'union' && Array.isArray(expression.value)) {
+      expression.value.forEach(function(component) {
+        if (component && component.expression) {
+          checkExpression(component.expression);
+        }
+      });
+    }
+  };
+
+  components.forEach(function(component) {
+    if (component && component.expression) {
+      checkExpression(component.expression);
+    }
+  });
+}
+
 function _is_string(obj) {
   return Object.prototype.toString.call(obj) == '[object String]';
+}
+
+function _is_unsafe_key(key) {
+  return key === '__proto__' || key === 'prototype' || key === 'constructor';
 }
 
 JSONPath.Handlers = Handlers;
@@ -6658,16 +6729,19 @@ process.umask = function() { return 0; };
 },{}],15:[function(require,module,exports){
 var unparse = require('escodegen').generate;
 
-module.exports = function (ast, vars) {
+module.exports = function (ast, vars, opts) {
+    if(!opts) opts = {};
+    var rejectAccessToMethodsOnFunctions = !opts.allowAccessToMethodsOnFunctions;
+
     if (!vars) vars = {};
     var FAIL = {};
-    
-    var result = (function walk (node, scopeVars) {
+
+    var result = (function walk (node, noExecute) {
         if (node.type === 'Literal') {
             return node.value;
         }
         else if (node.type === 'UnaryExpression'){
-            var val = walk(node.argument)
+            var val = walk(node.argument, noExecute)
             if (node.operator === '+') return +val
             if (node.operator === '-') return -val
             if (node.operator === '~') return ~val
@@ -6677,7 +6751,7 @@ module.exports = function (ast, vars) {
         else if (node.type === 'ArrayExpression') {
             var xs = [];
             for (var i = 0, l = node.elements.length; i < l; i++) {
-                var x = walk(node.elements[i]);
+                var x = walk(node.elements[i], noExecute);
                 if (x === FAIL) return FAIL;
                 xs.push(x);
             }
@@ -6689,7 +6763,7 @@ module.exports = function (ast, vars) {
                 var prop = node.properties[i];
                 var value = prop.value === null
                     ? prop.value
-                    : walk(prop.value)
+                    : walk(prop.value, noExecute)
                 ;
                 if (value === FAIL) return FAIL;
                 obj[prop.key.value || prop.key.name] = value;
@@ -6698,12 +6772,30 @@ module.exports = function (ast, vars) {
         }
         else if (node.type === 'BinaryExpression' ||
                  node.type === 'LogicalExpression') {
-            var l = walk(node.left);
-            if (l === FAIL) return FAIL;
-            var r = walk(node.right);
-            if (r === FAIL) return FAIL;
-            
             var op = node.operator;
+
+            if (op === '&&') {
+                var l = walk(node.left);
+                if (l === FAIL) return FAIL;
+                if (!l) return l;
+                var r = walk(node.right);
+                if (r === FAIL) return FAIL;
+                return r;
+            }
+            else if (op === '||') {
+                var l = walk(node.left);
+                if (l === FAIL) return FAIL;
+                if (l) return l;
+                var r = walk(node.right);
+                if (r === FAIL) return FAIL;
+                return r;
+            }
+
+            var l = walk(node.left, noExecute);
+            if (l === FAIL) return FAIL;
+            var r = walk(node.right, noExecute);
+            if (r === FAIL) return FAIL;
+
             if (op === '==') return l == r;
             if (op === '===') return l === r;
             if (op === '!=') return l != r;
@@ -6720,9 +6812,7 @@ module.exports = function (ast, vars) {
             if (op === '|') return l | r;
             if (op === '&') return l & r;
             if (op === '^') return l ^ r;
-            if (op === '&&') return l && r;
-            if (op === '||') return l || r;
-            
+
             return FAIL;
         }
         else if (node.type === 'Identifier') {
@@ -6738,51 +6828,59 @@ module.exports = function (ast, vars) {
             else return FAIL;
         }
         else if (node.type === 'CallExpression') {
-            var callee = walk(node.callee);
+            var callee = walk(node.callee, noExecute);
             if (callee === FAIL) return FAIL;
             if (typeof callee !== 'function') return FAIL;
-            
-            var ctx = node.callee.object ? walk(node.callee.object) : FAIL;
+
+
+            var ctx = node.callee.object ? walk(node.callee.object, noExecute) : FAIL;
             if (ctx === FAIL) ctx = null;
 
             var args = [];
             for (var i = 0, l = node.arguments.length; i < l; i++) {
-                var x = walk(node.arguments[i]);
+                var x = walk(node.arguments[i], noExecute);
                 if (x === FAIL) return FAIL;
                 args.push(x);
             }
+
+            if (noExecute) {
+                return undefined;
+            }
+
             return callee.apply(ctx, args);
         }
         else if (node.type === 'MemberExpression') {
-            var obj = walk(node.object);
-            // do not allow access to methods on Function 
-            if((obj === FAIL) || (typeof obj == 'function')){
+            var obj = walk(node.object, noExecute);
+            if((obj === FAIL) || (
+                (typeof obj == 'function') && rejectAccessToMethodsOnFunctions
+            )){
                 return FAIL;
             }
-            if (node.property.type === 'Identifier') {
+            if (node.property.type === 'Identifier' && !node.computed) {
+                if (isUnsafeProperty(node.property.name)) return FAIL;
                 return obj[node.property.name];
             }
-            var prop = walk(node.property);
-            if (prop === FAIL) return FAIL;
+            var prop = walk(node.property, noExecute);
+            if (prop === null || prop === FAIL) return FAIL;
+            if (isUnsafeProperty(prop)) return FAIL;
             return obj[prop];
         }
         else if (node.type === 'ConditionalExpression') {
-            var val = walk(node.test)
+            var val = walk(node.test, noExecute)
             if (val === FAIL) return FAIL;
-            return val ? walk(node.consequent) : walk(node.alternate)
+            return val ? walk(node.consequent) : walk(node.alternate, noExecute)
         }
         else if (node.type === 'ExpressionStatement') {
-            var val = walk(node.expression)
+            var val = walk(node.expression, noExecute)
             if (val === FAIL) return FAIL;
             return val;
         }
         else if (node.type === 'ReturnStatement') {
-            return walk(node.argument)
+            return walk(node.argument, noExecute)
         }
         else if (node.type === 'FunctionExpression') {
-            
             var bodies = node.body.body;
-            
+
             // Create a "scope" for our arguments
             var oldVars = {};
             Object.keys(vars).forEach(function(element){
@@ -6797,13 +6895,13 @@ module.exports = function (ast, vars) {
                 else return FAIL;
             }
             for(var i in bodies){
-                if(walk(bodies[i]) === FAIL){
+                if(walk(bodies[i], true) === FAIL){
                     return FAIL;
                 }
             }
             // restore the vars and scope after we walk
             vars = oldVars;
-            
+
             var keys = Object.keys(vars);
             var vals = keys.map(function(key) {
                 return vars[key];
@@ -6813,14 +6911,14 @@ module.exports = function (ast, vars) {
         else if (node.type === 'TemplateLiteral') {
             var str = '';
             for (var i = 0; i < node.expressions.length; i++) {
-                str += walk(node.quasis[i]);
-                str += walk(node.expressions[i]);
+                str += walk(node.quasis[i], noExecute);
+                str += walk(node.expressions[i], noExecute);
             }
-            str += walk(node.quasis[i]);
+            str += walk(node.quasis[i], noExecute);
             return str;
         }
         else if (node.type === 'TaggedTemplateExpression') {
-            var tag = walk(node.tag);
+            var tag = walk(node.tag, noExecute);
             var quasi = node.quasi;
             var strings = quasi.quasis.map(walk);
             var values = quasi.expressions.map(walk);
@@ -6831,9 +6929,13 @@ module.exports = function (ast, vars) {
         }
         else return FAIL;
     })(ast);
-    
+
     return result === FAIL ? undefined : result;
 };
+
+function isUnsafeProperty(name) {
+    return name === 'constructor' || name === '__proto__';
+}
 
 },{"escodegen":12}],"jsonpath":[function(require,module,exports){
 module.exports = require('./lib/index');
