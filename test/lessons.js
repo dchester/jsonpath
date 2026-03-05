@@ -36,3 +36,10 @@ suite('orig-google-code-issues', function() {
 
 });
 
+suite('greedy expressions', function() {
+  test(')] in expression', function() {
+    var data = { 'answer': 42 };
+    var results = jp.query(data, "$[?(')]')]");
+    assert.deepEqual(results, [ 42 ]);
+  })
+});
