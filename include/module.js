@@ -32,3 +32,9 @@ var _ast = {
     return _nodes;
   }
 };
+
+function _unescapeString(value) {
+  return value.replace(/\\(?:u[a-fA-F0-9]{4}|["'bfnrt/\\])/g, function(escape) {
+    return escape === "\\'" ? "'" : JSON.parse('"' + escape + '"');
+  });
+}
