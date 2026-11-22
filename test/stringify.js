@@ -18,6 +18,15 @@ suite('stringify', function() {
     assert.equal(string, '$.a.b.c');
   });
 
+  test('a rootless path can start with an array index', function() {
+    var data = [{ asdf: 1 }, { asdf: 2 }];
+    var string = jp.stringify([1, 'asdf']);
+    assert.equal(string, '$[1].asdf');
+    assert.deepEqual(jp.query(data, string), [2]);
+    assert.equal(jp.stringify([0]), '$[0]');
+    assert.equal(jp.stringify([0, 1, 'a.b']), '$[0][1]["a.b"]');
+  });
+
   test('simple parsed path stringifies', function() {
     var path = [
       { scope: 'child', operation: 'member', expression: { type: 'identifier', value: 'a' } },
