@@ -103,6 +103,39 @@ JSONPath                      | Description
 `$..*`                         | All members of JSON structure
 
 
+### Keys that need bracket notation
+
+Use quoted brackets for a literal property name containing punctuation or
+starting with a digit. Start at `$`, and attach a child subscript directly to
+its parent: `$.object["some.property"]`, without a dot before the bracket.
+The dot inside the quotes belongs to the name; it does not select another
+level. Recursive descent uses `$..["some.property"]`.
+
+```javascript
+var assert = require('assert');
+var jp = require('jsonpath');
+var data = {
+  'some.property': { value: true },
+  rateOfReturn: { '9mCNoload': 'value' }
+};
+assert.deepEqual(jp.query(data, '$["some.property"].value'), [true]);
+assert.deepEqual(jp.query(data, '$.rateOfReturn["9mCNoload"]'), ['value']);
+```
+
+The same bracket notation works inside filter expressions. In particular,
+`@["-objectId"]` selects a hyphenated key, and `@["@id"]` selects a JSON-LD
+property. The first `@` is the current item; `@` and `$` inside a quoted key
+are ordinary characters:
+
+```javascript
+var people = [
+  { '-objectId': 'per11282a', '@id': 'urn:one', '$kind': 'person' },
+  { '-objectId': 'per11282b', '@id': 'urn:two', '$kind': 'person' }
+];
+assert.deepEqual(jp.query(people, '$[?(@["-objectId"] == "per11282a")]'), [people[0]]);
+assert.deepEqual(jp.query(people, '$[?(@["@id"] == "urn:two" && @["$kind"] == "person")]'), [people[1]]);
+```
+
 ## Methods
 
 #### jp.query(obj, pathExpression[, count])
@@ -186,6 +219,20 @@ Returns a path expression in string form, given a path.  The supplied path may e
 var pathExpression = jp.stringify(['$', 'store', 'book', 0, 'author']);
 // "$.store.book[0].author"
 ```
+
+Flat paths may omit the leading `$`, including when the first component is
+an index into a root array:
+
+```javascript
+var jp = require('jsonpath');
+var rows = [{ asdf: 1 }, { asdf: 2 }];
+var pathExpression = jp.stringify([1, 'asdf']); // '$[1].asdf'
+var values = jp.query(rows, pathExpression);   // [2]
+```
+
+Strings in a flat path are literal keys. For example, `['$', '*']` selects a
+property named `*`; it is not a wildcard query. To preserve query operators,
+pass a parsed expression such as `jp.stringify(jp.parse('$[*].asdf'))`.
 
 ## Differences from Original Implementation
 
