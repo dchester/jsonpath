@@ -51,4 +51,18 @@ suite('stringify', function() {
     assert.throws(function() { jp.stringify() }, /we need a path/);
   });
 
+  [
+    '$["left","right"]',
+    '$.items[0,2]',
+    '$.items[0,1:3]',
+    '$..["left","right"]'
+  ].forEach(function(expression) {
+    test('round trips union ' + expression, function() {
+      var data = { left: 1, right: 2, items: [3, 4, 5] };
+      var string = jp.stringify(jp.parse(expression));
+      assert.equal(string, expression);
+      assert.deepEqual(jp.query(data, string), jp.query(data, expression));
+    });
+  });
+
 });
